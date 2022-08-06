@@ -10,7 +10,7 @@ from sklearn.linear_model import LinearRegression
 import random
 import json
 
-def extract_coordinates_for_all_frames(person_id,number_of_frames,names,points):
+def extract_coordinates_for_all_frames(person_id,number_of_frames,body_part,names,points):
     return_dict = {}
     for name in names:
         return_dict[name] = []
@@ -19,10 +19,21 @@ def extract_coordinates_for_all_frames(person_id,number_of_frames,names,points):
         f = open(file_path)
         data = json.load(f)
         for i,name in enumerate(names):
-            return_dict[name].append(data['people'][person_id]['face_keypoints_2d'][points[i]])
+            point=(data['people'][person_id][body_part][points[i]*3],data['people'][person_id][body_part][points[i]*3+1],data['people'][person_id][body_part][points[i]*3+2])
+            return_dict[name].append(point)
 
     return return_dict
-    # returns JSON object as
+
+def distance_between_2_points(point_a,point_b):
+    x_dist=abs(point_a[0]-point_b[0])
+    y_dist=abs(point_b[1]-point_b[1])
+    return math.sqrt(x_dist**2+y_dist**2)
+
+def avg_2_points(point_a,point_b):
+    new_point=((point_a[0]+point_b[0])/2,(point_a[1]+point_b[1])/2,(point_a[2]+point_a[2]/2))
+    return new_point
+
+
 # a dictionary
 
 
