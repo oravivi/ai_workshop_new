@@ -34,4 +34,32 @@ temp_X= [np.array(average_dist_between_eyelids).reshape(-1, 1),
 
 X = np.concatenate(temp_X, axis=1)
 print (X)
+df = pd.read_csv("ep1_3m.csv")
+print()
+y  =[int(df["IN_Gaz~GS"][0])+int(df["IN_Gaz~FG"][0]) for i in range(num_of_frames)]
+test_points_indexes = np.random.choice([0, 1], size=len(X), p=[.85, .15])
+X_train=[]
+y_train=[]
+X_test=[]
+y_test=[]
+for i,test_point in enumerate(test_points_indexes):
+    if test_point:
+        X_test.append(X[i])
+        y_test.append(y[i])
+    else:
+        X_train.append(X[i])
+        y_train.append(y[i])
+
+models = []
+titles = []
+
+C=10
+clf_lin = svm.SVC(C=C)
+clf_lin.set_params(kernel='linear').fit(X_train, y_train)
+y_prediction=[]
+for x in X_test:
+    y_prediction.append(clf_lin.predict(x.reshape(1,-1)))
+print (sklearn.metrics.accuracy_score(y_test,y_prediction))
+models.append(clf_lin)
+titles.append("linear kernel")
 
