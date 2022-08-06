@@ -19,7 +19,11 @@ def extract_coordinates_for_all_frames(person_id,number_of_frames,body_part,name
         f = open(file_path)
         data = json.load(f)
         for i,name in enumerate(names):
-            point=(data['people'][person_id][body_part][points[i]*3],data['people'][person_id][body_part][points[i]*3+1],data['people'][person_id][body_part][points[i]*3+2])
+            #point=(data['people'][person_id][body_part][points[i]*3],data['people'][person_id][body_part][points[i]*3+1],data['people'][person_id][body_part][points[i]*3+2])
+
+            point = (data['people'][person_id][body_part][points[i] * 3],
+                     data['people'][person_id][body_part][points[i] * 3 + 1],
+                     data['people'][person_id][body_part][points[i] * 3 + 2])
             return_dict[name].append(point)
 
     return return_dict

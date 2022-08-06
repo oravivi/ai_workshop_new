@@ -8,14 +8,29 @@ import workshop_utils
 
 
 # distance between the center of the eyebrow and the eye
-def left_eyebrow_center_to_eye_dist():
-    return
+def left_eyebrow_center_to_eye_dist(coordinates_dict: dict, frames_num):
+    distances = []
+    for i in range(frames_num):
+        dist = workshop_utils.distance_between_2_points(
+            (coordinates_dict['left_eyebrow_center'][i][0], coordinates_dict['left_eyebrow_center'][i][1]),
+            (coordinates_dict['left_eye_center'][i][0], coordinates_dict['left_eye_center'][i][1]))
+        distances.append(dist)
+    return distances
+
+def right_eyebrow_center_to_eye_dist(coordinates_dict: dict, frames_num):
+    distances = []
+    for i in range(frames_num):
+        dist = workshop_utils.distance_between_2_points(
+            (coordinates_dict['right_eyebrow_center'][i][0], coordinates_dict['right_eyebrow_center'][i][1]),
+            (coordinates_dict['right_eye_center'][i][0], coordinates_dict['right_eye_center'][i][1]))
+        distances.append(dist)
+    return distances
 
 # distance between the center and the edges of each eyebrow
-def left_eyebrow_edges_to_center_dist():
+def left_eyebrow_edges_to_center_angle():
     pass
 
-def right_eyebrow_edges_to_center_dist():
+def right_eyebrow_edges_to_center_angle():
     pass
 # distance between the eyebrows
 def eyebrows_dist():
@@ -32,9 +47,15 @@ def mouth_right_angle():
     pass
 
 def extract_features_from_coordinates(infant_dict, adult_dict, frames_num):
-    #infant
     infant_features_matrix = []
     adult_features_matrix = []
+    #infant
+    infant_features_matrix.append(left_eyebrow_center_to_eye_dist(infant_dict, frames_num))
+    infant_features_matrix.append(right_eyebrow_center_to_eye_dist(infant_dict, frames_num))
+    #adult
+    adult_features_matrix.append(left_eyebrow_center_to_eye_dist(adult_dict, frames_num))
+    adult_features_matrix.append(right_eyebrow_center_to_eye_dist(adult_dict, frames_num))
+    return infant_features_matrix, adult_features_matrix
 
 if __name__ == '__main__':
     # get relevant dict for all frames
@@ -72,16 +93,15 @@ if __name__ == '__main__':
              'mouth_lower_lip_bottom_3',
              'mouth_left_edge',
              'mouth_right_edge']
-    numbers = [19, 17, 21, 24, 22, 26, 37, 38, 40, 41, 68, 36, 39, 43, 44, 46,
-               47, 69, 42, 45, 61, 62, 63, 50, 51, 52, 56, 57, 58, 48, 54]
+    numbers = [19, 17, 21, 24, 22, 26, 37, 38, 40, 41, 68, 36, 39,
+               43, 44, 46, 47, 69, 42, 45, 61, 62, 63, 50, 51, 52, 65, 66, 67, 56, 57, 58, 48, 54]
 
     infant_dict = workshop_utils.extract_coordinates_for_all_frames(0, 2, 'face_keypoints_2d' ,names, numbers)
     adult_dict = workshop_utils.extract_coordinates_for_all_frames(1, 2, 'face_keypoints_2d', names, numbers)
-
     infant_features_matrix = []
     adult_features_matrix = []
-    frames_num = len(infant_dict)
+    frames_num = len((infant_dict['left_eyebrow_center']))
 
-    infant_features_matrix, adult_features_matrix = extract_features_from_coordinates()
+    infant_features_matrix, adult_features_matrix = extract_features_from_coordinates(infant_dict, adult_dict, frames_num)
 
 
