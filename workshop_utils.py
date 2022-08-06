@@ -26,16 +26,24 @@ def extract_coordinates_for_all_frames(person_id,number_of_frames,names,points):
 # a dictionary
 
 
-def get_angle_between_vectors(vector1, vector2):
+def get_angle_between_three_points(point1, point2, point3):
     """
-    :param vector1:
-    :param vector2:
+    :param point1: [x,y]
+    :param point2: [x,y]
+    :param point3: [x,y]
     :return: Angle between vector1 and vector2 in RADIANS
     """
-    unit_vector1 = vector1 / np.linalg.norm(vector1)
-    unit_vector2 = vector2 / np.linalg.norm(vector2)
-    dot_product = np.dot(unit_vector1, unit_vector2)
-    angle = np.arccos(dot_product)
+    a = np.array(point1)
+    b = np.array(point2)
+    c = np.array(point3)
+
+    ba = a - b
+    bc = c - b
+
+    cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
+    angle = np.arccos(cosine_angle)
+
     return angle
+
 
 
