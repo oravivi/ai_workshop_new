@@ -24,3 +24,18 @@ def extract_coordinates_for_all_frames(person_id,number_of_frames,names,points):
     return return_dict
     # returns JSON object as
 # a dictionary
+
+
+def get_angle_between_vectors(vector1, vector2):
+    """
+    :param vector1:
+    :param vector2:
+    :return: Angle between vector1 and vector2 in RADIANS
+    """
+    unit_vector1 = vector1 / np.linalg.norm(vector1)
+    unit_vector2 = vector2 / np.linalg.norm(vector2)
+    dot_product = np.dot(unit_vector1, unit_vector2)
+    angle = np.arccos(dot_product)
+    return angle
+
+
