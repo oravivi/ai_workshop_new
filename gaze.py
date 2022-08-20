@@ -3,8 +3,8 @@ from main import plot_results
 from workshop_utils import *
 import numpy as np
 
-start_from_frame=5
-until_frame=20
+start_from_frame=120
+until_frame=145
 number_of_frames=until_frame-start_from_frame
 coordinates_dict=extract_coordinates_for_all_frames(0,start_from_frame,until_frame,"face_keypoints_2d",["eyelid_top_left","eyelid_bottom_left",
                                                              "eyelid_top_right","eyelid_bottom_right",
