@@ -10,20 +10,19 @@ from sklearn.linear_model import LinearRegression
 import random
 import json
 
-def extract_coordinates_for_all_frames(person_id,number_of_frames,body_part,names,points):
+def extract_coordinates_for_all_frames(person_id,start_from_frame,until_frame,body_part,names,points,subject):
     return_dict = {}
     for name in names:
         return_dict[name] = []
-    for i in range(number_of_frames):
-        file_path=".\output_json\clip_00000000000"+str(i)+"_keypoints.json"
+    for i in range(start_from_frame,until_frame):
+        file_path=".\subjects\output_json\\"+subject+"\\"+subject+"_"+str(i).zfill(12) +"_keypoints.json"
         f = open(file_path)
         data = json.load(f)
-        for i,name in enumerate(names):
+        for j,name in enumerate(names):
             #point=(data['people'][person_id][body_part][points[i]*3],data['people'][person_id][body_part][points[i]*3+1],data['people'][person_id][body_part][points[i]*3+2])
-
-            point = (data['people'][person_id][body_part][points[i] * 3],
-                     data['people'][person_id][body_part][points[i] * 3 + 1],
-                     data['people'][person_id][body_part][points[i] * 3 + 2])
+            point = (data['people'][person_id][body_part][points[j] * 3],
+                     data['people'][person_id][body_part][points[j] * 3 + 1],
+                     data['people'][person_id][body_part][points[j] * 3 + 2])
             return_dict[name].append(point)
 
     return return_dict
