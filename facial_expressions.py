@@ -17,6 +17,7 @@ def left_eyebrow_center_to_eye_dist(coordinates_dict: dict, frames_num):
         distances.append(dist)
     return distances
 
+
 def right_eyebrow_center_to_eye_dist(coordinates_dict: dict, frames_num):
     distances = []
     for i in range(frames_num):
@@ -26,25 +27,33 @@ def right_eyebrow_center_to_eye_dist(coordinates_dict: dict, frames_num):
         distances.append(dist)
     return distances
 
+
 # distance between the center and the edges of each eyebrow
 def left_eyebrow_edges_to_center_angle():
     pass
 
+
 def right_eyebrow_edges_to_center_angle():
     pass
+
+
 # distance between the eyebrows
 def eyebrows_dist():
     pass
+
 
 # angle between the mouth edges line and the upper lip (bottom)
 def mouth_edges_to_lower_lip_angle():
     pass
 
+
 def mouth_left_angle():
     pass
 
+
 def mouth_right_angle():
     pass
+
 
 def extract_features_from_coordinates(infant_dict, adult_dict, frames_num):
     infant_features_matrix = []
@@ -56,6 +65,7 @@ def extract_features_from_coordinates(infant_dict, adult_dict, frames_num):
     adult_features_matrix.append(left_eyebrow_center_to_eye_dist(adult_dict, frames_num))
     adult_features_matrix.append(right_eyebrow_center_to_eye_dist(adult_dict, frames_num))
     return infant_features_matrix, adult_features_matrix
+
 
 if __name__ == '__main__':
     # get relevant dict for all frames
