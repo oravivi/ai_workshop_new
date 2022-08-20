@@ -183,5 +183,5 @@ def plot_results(classifiers=('linear', 'rbf', 'poly', 'sig'), titles =['Linear 
         plt.show()
 
 
-labels = get_labels_from_file(file_path='ep 1.xlsx')
+labels = get_labels_from_file(file_path='.\ep 1.xlsx')
 print(labels[1]['facial_exp_labels'][158], labels[1]['facial_exp_labels'][160])
