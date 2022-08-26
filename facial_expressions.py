@@ -69,14 +69,14 @@ def extract_features_from_coordinates(infant_dict, frames_num):
     #infant
     infant_features_matrix.append(left_eyebrow_center_to_eye_dist(infant_dict, frames_num))
     infant_features_matrix.append(right_eyebrow_center_to_eye_dist(infant_dict, frames_num))
-    infant_features_matrix.append(mouth_edges_to_lower_lip_angle(infant_dict, frames_num))
+    #infant_features_matrix.append(mouth_edges_to_lower_lip_angle(infant_dict, frames_num))
     #adult
     #adult_features_matrix.append(left_eyebrow_center_to_eye_dist(adult_dict, frames_num))
     #adult_features_matrix.append(right_eyebrow_center_to_eye_dist(adult_dict, frames_num))
     #adult_features_matrix.append(mouth_edges_to_lower_lip_angle(adult_dict, frames_num))
     return infant_features_matrix
 
-def get_feature_matrices(sub_no, frames_num):
+def get_feature_matrices(sub_no, frames_to_skip, frames_num):
     # get relevant dict for all frames
     names = ['left_eyebrow_center',
              'left_eyebrow_left_edge',
@@ -115,13 +115,14 @@ def get_feature_matrices(sub_no, frames_num):
     numbers = [19, 17, 21, 24, 22, 26, 37, 38, 40, 41, 68, 36, 39,
                43, 44, 46, 47, 69, 42, 45, 61, 62, 63, 50, 51, 52, 65, 66, 67, 56, 57, 58, 48, 54]
     frames_num = frames_num
-    infant_dict = extract_coordinates_for_all_frames(person_id=0, start_from_frame=0, until_frame=frames_num, body_part='face_keypoints_2d' ,names=names, points=numbers, subject=sub_no)
+    total_frames = frames_num-frames_to_skip
+    infant_dict = extract_coordinates_for_all_frames(person_id=0, start_from_frame=frames_to_skip, until_frame=frames_num, body_part='face_keypoints_2d' ,names=names, points=numbers, subject=sub_no)
     #adult_dict = extract_coordinates_for_all_frames(1, 2, 'face_keypoints_2d', names, numbers)
     infant_features_matrix = []
     adult_features_matrix = []
 
-    #infant_features_matrix, adult_features_matrix = extract_features_from_coordinates(infant_dict, adult_dict, frames_num)
-    infant_features_matrix, adult_features_matrix = extract_features_from_coordinates(infant_dict, frames_num)
+    #infant_features_matrix, adult_features_matrix = extract_features_from_coordinates(infant_dict, adult_dict, total_frames)
+    infant_features_matrix = extract_features_from_coordinates(infant_dict, total_frames)
     infant_features_matrix = np.concatenate(infant_features_matrix, axis=1)
     #adult_features_matrix = np.concatenate(adult_features_matrix, axis=1)
     return infant_features_matrix
@@ -129,10 +130,19 @@ def get_feature_matrices(sub_no, frames_num):
 
 
 if __name__ == '__main__':
-    infant_x = get_feature_matrices(frames_num=3000, sub_no='611_3m')
-    y = get_labels_from_file(file_path='ep 1.xlsx')
+    frames_to_skip=30
+    frame_num=3000 #TODO use the number of frames in the directory
+    sub_no_from_file = '611_3m'
+    converted_sub_no_labels = 1 #TODO use dict to convert from the file name to sub_no
+    infant_x = get_feature_matrices(frames_num=frame_num, frames_to_skip=frames_to_skip, sub_no=sub_no_from_file)
+    labels = get_labels_from_file(file_path='ep 1.xlsx')
+    y = [labels[converted_sub_no_labels]['facial_exp_labels'][i] for i in range(frames_to_skip, frame_num)]
     X_train, X_test, y_train, y_test = split_data(infant_x, y, train_ratio=0.2)
+    print(X_train)
     classifier, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')
+    classifier, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')
+    classifier, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='poly')
+    classifier, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='sigmoid')
 
 
 
