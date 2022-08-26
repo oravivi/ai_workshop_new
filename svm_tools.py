@@ -96,7 +96,7 @@ def get_labels_from_file(file_path='ep 1.xlsx'):
                              'hands_labels':[]
                                      }
         labels_data[i+1] = subject_labels
-    print(labels_data)
+    #print(labels_data)
     labels_from_excel = pd.read_excel(file_path)
     rows = labels_from_excel.iterrows()
     for i, row in rows:
@@ -184,5 +184,5 @@ def plot_results(classifiers=('linear', 'rbf', 'poly', 'sig'), titles =['Linear 
         plt.show()
 
 
-labels = get_labels_from_file(file_path='.\ep 1.xlsx')
-print(labels[1]['facial_exp_labels'][158], labels[1]['facial_exp_labels'][160])
+#labels = get_labels_from_file(file_path='.\ep 1.xlsx')
+#print(labels[1]['facial_exp_labels'][158], labels[1]['facial_exp_labels'][160])
