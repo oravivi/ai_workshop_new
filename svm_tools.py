@@ -96,7 +96,7 @@ def get_labels_from_file(file_path='ep 1.xlsx'):
                              'hands_labels':[]
                                      }
         labels_data[i+1] = subject_labels
-    print(labels_data)
+    #print(labels_data)
     labels_from_excel = pd.read_excel(file_path)
     rows = labels_from_excel.iterrows()
     for i, row in rows:
@@ -144,7 +144,7 @@ def run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear'):
     elif kernel=='sigmoid':
         classifier = svm.SVC(kernel='sigmoid', C=C, decision_function_shape='ovo').fit(X_train, y_train)
     y_prediction = []
-    classifier.set_params(kernel='linear').fit(X_train, y_train)
+    classifier.set_params(kernel=kernel).fit(X_train, y_train)
     for x in X_test:
         y_prediction.append(classifier.predict(x.reshape(1, -1)))
     accuracy = sklearn.metrics.accuracy_score(y_test, y_prediction)
@@ -184,5 +184,5 @@ def plot_results(classifiers=('linear', 'rbf', 'poly', 'sig'), titles =['Linear 
         plt.show()
 
 
-labels = get_labels_from_file(file_path='.\ep 1.xlsx')
-print(labels[1]['facial_exp_labels'][158], labels[1]['facial_exp_labels'][160])
+#labels = get_labels_from_file(file_path='.\ep 1.xlsx')
+#print(labels[1]['facial_exp_labels'][158], labels[1]['facial_exp_labels'][160])
