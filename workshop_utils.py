@@ -59,5 +59,6 @@ def get_angle_between_three_points(point1, point2, point3):
 
     return angle
 
-
+def convert_row_to_column(row):
+    return np.array(row).reshape(-1, 1)
 

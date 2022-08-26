@@ -133,7 +133,7 @@ def get_labels_from_file(file_path='ep 1.xlsx'):
 # 'X' the matrix with the extracted features for each classification
 # a row in X represents a specific feature, a column in X represents a specific frame
 # y - a vector of labels
-def run_svm_classifier(X_test, X_train, y_train, y_test, kernel='linear'):
+def run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear'):
     C = 1
     if kernel=='linear':
         classifier = svm.SVC(C=C, kernel='linear', decision_function_shape='ovo')
@@ -144,6 +144,7 @@ def run_svm_classifier(X_test, X_train, y_train, y_test, kernel='linear'):
     elif kernel=='sigmoid':
         classifier = svm.SVC(kernel='sigmoid', C=C, decision_function_shape='ovo').fit(X_train, y_train)
     y_prediction = []
+    classifier.set_params(kernel='linear').fit(X_train, y_train)
     for x in X_test:
         y_prediction.append(classifier.predict(x.reshape(1, -1)))
     accuracy = sklearn.metrics.accuracy_score(y_test, y_prediction)
