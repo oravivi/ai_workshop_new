@@ -140,6 +140,9 @@ if __name__ == '__main__':
     X_train, X_test, y_train, y_test = split_data(infant_x, y, train_ratio=0.2)
     print(X_train)
     classifier, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')
+    classifier, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')
+    classifier, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='poly')
+    classifier, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='sigmoid')
 
 
 

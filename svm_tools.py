@@ -144,7 +144,7 @@ def run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear'):
     elif kernel=='sigmoid':
         classifier = svm.SVC(kernel='sigmoid', C=C, decision_function_shape='ovo').fit(X_train, y_train)
     y_prediction = []
-    classifier.set_params(kernel='linear').fit(X_train, y_train)
+    classifier.set_params(kernel=kernel).fit(X_train, y_train)
     for x in X_test:
         y_prediction.append(classifier.predict(x.reshape(1, -1)))
     accuracy = sklearn.metrics.accuracy_score(y_test, y_prediction)
