@@ -4,28 +4,29 @@ from sklearn.model_selection import train_test_split
 from sklearn import svm, datasets
 import matplotlib.pyplot as plt
 import numpy as np
-import workshop_utils
+from workshop_utils import *
+from svm_tools import *
 
 
 # distance between the center of the eyebrow and the eye
 def left_eyebrow_center_to_eye_dist(coordinates_dict: dict, frames_num):
     distances = []
     for i in range(frames_num):
-        dist = workshop_utils.distance_between_2_points(
+        dist = distance_between_2_points(
             (coordinates_dict['left_eyebrow_center'][i][0], coordinates_dict['left_eyebrow_center'][i][1]),
             (coordinates_dict['left_eye_center'][i][0], coordinates_dict['left_eye_center'][i][1]))
         distances.append(dist)
-    return distances
+    return convert_row_to_column(distances)
 
 
 def right_eyebrow_center_to_eye_dist(coordinates_dict: dict, frames_num):
     distances = []
     for i in range(frames_num):
-        dist = workshop_utils.distance_between_2_points(
+        dist = distance_between_2_points(
             (coordinates_dict['right_eyebrow_center'][i][0], coordinates_dict['right_eyebrow_center'][i][1]),
             (coordinates_dict['right_eye_center'][i][0], coordinates_dict['right_eye_center'][i][1]))
         distances.append(dist)
-    return distances
+    return convert_row_to_column(distances)
 
 
 # distance between the center and the edges of each eyebrow
@@ -43,8 +44,15 @@ def eyebrows_dist():
 
 
 # angle between the mouth edges line and the upper lip (bottom)
-def mouth_edges_to_lower_lip_angle():
-    pass
+def mouth_edges_to_lower_lip_angle(coordinates_dict, frames_num):
+    angles = []
+    for i in range(frames_num):
+        dist = get_angle_between_three_points(
+            (coordinates_dict['mouth_left_edge'][i][0], coordinates_dict['mouth_left_edge'][i][1]),
+            (coordinates_dict['mouth_lower_lip_bottom_2'][i][0], coordinates_dict['mouth_lower_lip_bottom_2'][i][1]),
+            (coordinates_dict['mouth_right_edge'][i][0],coordinates_dict['mouth_right_edge'][i][1]))
+        angles.append(dist)
+    return convert_row_to_column(angles)
 
 
 def mouth_left_angle():
@@ -55,19 +63,20 @@ def mouth_right_angle():
     pass
 
 
-def extract_features_from_coordinates(infant_dict, adult_dict, frames_num):
+def extract_features_from_coordinates(infant_dict, frames_num):
     infant_features_matrix = []
     adult_features_matrix = []
     #infant
     infant_features_matrix.append(left_eyebrow_center_to_eye_dist(infant_dict, frames_num))
     infant_features_matrix.append(right_eyebrow_center_to_eye_dist(infant_dict, frames_num))
+    infant_features_matrix.append(mouth_edges_to_lower_lip_angle(infant_dict, frames_num))
     #adult
-    adult_features_matrix.append(left_eyebrow_center_to_eye_dist(adult_dict, frames_num))
-    adult_features_matrix.append(right_eyebrow_center_to_eye_dist(adult_dict, frames_num))
-    return infant_features_matrix, adult_features_matrix
+    #adult_features_matrix.append(left_eyebrow_center_to_eye_dist(adult_dict, frames_num))
+    #adult_features_matrix.append(right_eyebrow_center_to_eye_dist(adult_dict, frames_num))
+    #adult_features_matrix.append(mouth_edges_to_lower_lip_angle(adult_dict, frames_num))
+    return infant_features_matrix
 
-
-if __name__ == '__main__':
+def get_feature_matrices(sub_no, frames_num):
     # get relevant dict for all frames
     names = ['left_eyebrow_center',
              'left_eyebrow_left_edge',
@@ -105,13 +114,27 @@ if __name__ == '__main__':
              'mouth_right_edge']
     numbers = [19, 17, 21, 24, 22, 26, 37, 38, 40, 41, 68, 36, 39,
                43, 44, 46, 47, 69, 42, 45, 61, 62, 63, 50, 51, 52, 65, 66, 67, 56, 57, 58, 48, 54]
-
-    infant_dict = workshop_utils.extract_coordinates_for_all_frames(0, 2, 'face_keypoints_2d' ,names, numbers)
-    adult_dict = workshop_utils.extract_coordinates_for_all_frames(1, 2, 'face_keypoints_2d', names, numbers)
+    frames_num = frames_num
+    infant_dict = extract_coordinates_for_all_frames(person_id=0, start_from_frame=0, until_frame=frames_num, body_part='face_keypoints_2d' ,names=names, points=numbers, subject=sub_no)
+    #adult_dict = extract_coordinates_for_all_frames(1, 2, 'face_keypoints_2d', names, numbers)
     infant_features_matrix = []
     adult_features_matrix = []
-    frames_num = len((infant_dict['left_eyebrow_center']))
 
-    infant_features_matrix, adult_features_matrix = extract_features_from_coordinates(infant_dict, adult_dict, frames_num)
+    #infant_features_matrix, adult_features_matrix = extract_features_from_coordinates(infant_dict, adult_dict, frames_num)
+    infant_features_matrix, adult_features_matrix = extract_features_from_coordinates(infant_dict, frames_num)
+    infant_features_matrix = np.concatenate(infant_features_matrix, axis=1)
+    #adult_features_matrix = np.concatenate(adult_features_matrix, axis=1)
+    return infant_features_matrix
+
+
+
+if __name__ == '__main__':
+    infant_x = get_feature_matrices(frames_num=3000, sub_no='611_3m')
+    y = get_labels_from_file(file_path='ep 1.xlsx')
+    X_train, X_test, y_train, y_test = split_data(infant_x, y, train_ratio=0.2)
+    classifier, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')
+
+
+
 
 

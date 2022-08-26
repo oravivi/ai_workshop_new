@@ -176,7 +176,7 @@ def get_labels_from_file(file_path='ep 1.xlsx'):
 # 'X' the matrix with the extracted features for each classification
 # a row in X represents a specific feature, a column in X represents a specific frame
 # y - a vector of labels
-def run_svm_classifier(X_test, X_train, y_test,y_train, kernel='linear'):
+def run_svm_classifier(X_test, X_train, y_train, y_test, kernel='linear'):
     C = 1
     if kernel=='linear':
         classifier = svm.SVC(C=C, kernel='linear', decision_function_shape='ovo').fit(X_train, y_train)
