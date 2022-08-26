@@ -69,12 +69,12 @@ if __name__ == '__main__':
                                                                               coordinates_dict['outer_bottom_lip_1']))
 
         mouth_left_inner_corner_angles.append(get_angle_between_three_points(coordinates_dict['inner_upper_lip_1'],
-                                                                              coordinates_dict['inner_lip_left_corner'],
-                                                                              coordinates_dict['inner_bottom_lip_3']))
+                                                                             coordinates_dict['inner_lip_left_corner'],
+                                                                             coordinates_dict['inner_bottom_lip_3']))
 
         mouth_left_outer_corner_angles.append(get_angle_between_three_points(coordinates_dict['outer_upper_lip_1'],
-                                                                              coordinates_dict['outer_lip_left_corner'],
-                                                                              coordinates_dict['outer_bottom_lip_5']))
+                                                                             coordinates_dict['outer_lip_left_corner'],
+                                                                             coordinates_dict['outer_bottom_lip_5']))
     temp_X = [np.array(mouth_right_inner_corner_angles).reshape(-1, 1),
               np.array(mouth_right_outer_corner_angles).reshape(-1, 1),
               np.array(mouth_left_inner_corner_angles).reshape(-1, 1),
