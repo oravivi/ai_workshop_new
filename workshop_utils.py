@@ -15,7 +15,7 @@ def extract_coordinates_for_all_frames(person_id,start_from_frame,until_frame,bo
     for name in names:
         return_dict[name] = []
     for i in range(start_from_frame,until_frame):
-        file_path=".\subjects\output_json\\"+subject+"\clip_"+str(i).zfill(12) +"_keypoints.json"
+        file_path=".\subjects\\"+subject+"\output_json\clip_"+str(i).zfill(12) +"_keypoints.json"
         f = open(file_path)
         data = json.load(f)
         for j,name in enumerate(names):

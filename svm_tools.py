@@ -11,6 +11,49 @@ from sklearn.linear_model import LinearRegression
 import random
 import json
 
+subjects_dict={"611_3m" :1,
+               "611_6m" :2,
+               "3447_3m" :3,
+               "3447_6m" :4,
+               "409_3m" :5,
+               "409_6m" :6,
+               "2529_3m" :7,
+               "2529_6m" :8,
+               "2730_3m" :9,
+               "2730_6m" :10,
+               "2831_3m" :11,
+               "2831_6m" :12,
+               "3548_3m" :13,
+               "3548_6m" :14,
+               "3750_3m" :15,
+               "3750_6m" :16,
+               "4051_3m" :17,
+               "4051_6m" :18,
+               "3649_3m" :19,
+               "3649_6m" :20,
+               "4555_3m" :21,
+               "4555_6m" :22,
+               "6267_3m" :23,
+               "6267_6m" :24,
+               "6569_3m" :25,
+               "6569_6m" :26,
+               "6064_3m" :27,
+               "6064_6m" :28,
+               "6166_3m" :29,
+               "6166_6m" :30,
+               "4656_3m" :31,
+               "4656_6m" :32,
+               "7275_3m" :33,
+               "7275_6m" :34,
+               "5458_3m" :35,
+               "5458_6m" :36,
+               "7477_3m" :37,
+               "7477_6m" :38,
+               "7678_3m" :39,
+               "7678_6m" :40
+
+               }
+
 
 # 'X' the matrix with the extracted features for each classification
 # a row in X represents a specific feature, a column in X represents a specific frame
@@ -133,10 +176,10 @@ def get_labels_from_file(file_path='ep 1.xlsx'):
 # 'X' the matrix with the extracted features for each classification
 # a row in X represents a specific feature, a column in X represents a specific frame
 # y - a vector of labels
-def run_svm_classifier(X_test, X_train, y_train, y_test, kernel='linear'):
+def run_svm_classifier(X_test, X_train, y_test,y_train, kernel='linear'):
     C = 1
     if kernel=='linear':
-        classifier = svm.SVC(C=C, kernel='linear', decision_function_shape='ovo')
+        classifier = svm.SVC(C=C, kernel='linear', decision_function_shape='ovo').fit(X_train, y_train)
     elif kernel=='rbf':
         classifier = svm.SVC(kernel='rbf', gamma=1, C=C, decision_function_shape='ovo').fit(X_train, y_train)
     elif kernel=='poly':
@@ -183,5 +226,5 @@ def plot_results(classifiers=('linear', 'rbf', 'poly', 'sig'), titles =['Linear 
         plt.show()
 
 
-labels = get_labels_from_file(file_path='.\ep 1.xlsx')
-print(labels[1]['facial_exp_labels'][158], labels[1]['facial_exp_labels'][160])
+#labels = get_labels_from_file(file_path='.\ep 1.xlsx')
+#print(labels[1]['facial_exp_labels'][158], labels[1]['facial_exp_labels'][160])
