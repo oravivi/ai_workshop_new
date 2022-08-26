@@ -9,6 +9,7 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 import random
 import json
+import os
 
 def extract_coordinates_for_all_frames(person_id,start_from_frame,until_frame,body_part,names,points,subject):
     return_dict = {}
@@ -61,4 +62,10 @@ def get_angle_between_three_points(point1, point2, point3):
 
 def convert_row_to_column(row):
     return np.array(row).reshape(-1, 1)
+
+
+def get_frame_number(relative_path):
+    self_directory = os.getcwd()
+    path = os.path.join(self_directory, relative_path)
+    return len(os.listdir(path))
 
