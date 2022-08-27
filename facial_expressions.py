@@ -160,13 +160,12 @@ if __name__ == '__main__':
     X_train, X_test, y_train, y_test = split_data(infant_x, y, train_ratio=0.2)
     print(X_train)
     linear_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')
-    rbf_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')
-    poly_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear') #TODO change back to poly
-    sig_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='sigmoid')
+    #rbf_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')
+    #poly_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear') #TODO change back to poly
+    #sig_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='sigmoid')
     y_nums = convert_labels_to_ints(y, label_type='facial_exp_labels')
-    plot_results(infant_x, y_nums, classifiers=(linear_clf, rbf_clf, poly_clf, sig_clf),
-                 titles=['Linear kernel', 'RBF kernel', 'Polynomial kernel', 'Sigmoid kernel'])
-
+    #plot_results(infant_x, y_nums, classifiers=(linear_clf, rbf_clf, poly_clf, sig_clf),titles=['Linear kernel', 'RBF kernel', 'Polynomial kernel', 'Sigmoid kernel'])
+    plot_results_2(infant_x, y_nums, models=[linear_clf, linear_clf, linear_clf,linear_clf],titles=['Linear kernel', 'Linear kernel','Linear kernel', 'Linear kernel'])
 
 
 
