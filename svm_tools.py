@@ -10,6 +10,9 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 import random
 import json
+from sklearn.manifold import TSNE
+from sklearn.preprocessing import StandardScaler
+from sklearn.inspection import DecisionBoundaryDisplay
 
 subjects_dict={"611_3m" :1,
                "611_6m" :2,
@@ -179,7 +182,7 @@ def get_labels_from_file(file_path='ep 1.xlsx'):
 def run_svm_classifier(X_test, X_train, y_train, y_test, kernel='linear'):
     C = 1
     if kernel=='linear':
-        classifier = svm.SVC(C=C, kernel='linear', decision_function_shape='ovo').fit(X_train, y_train)
+        classifier = svm.SVC(C=C, kernel='linear', decision_function_shape='ovo')
     elif kernel=='rbf':
         classifier = svm.SVC(kernel='rbf', gamma=1, C=C, decision_function_shape='ovo').fit(X_train, y_train)
     elif kernel=='poly':
@@ -187,6 +190,7 @@ def run_svm_classifier(X_test, X_train, y_train, y_test, kernel='linear'):
     elif kernel=='sigmoid':
         classifier = svm.SVC(kernel='sigmoid', C=C, decision_function_shape='ovo').fit(X_train, y_train)
     y_prediction = []
+    classifier.set_params(kernel='linear').fit(X_train, y_train)
     for x in X_test:
         y_prediction.append(classifier.predict(x.reshape(1, -1)))
     accuracy = sklearn.metrics.accuracy_score(y_test, y_prediction)
@@ -194,7 +198,53 @@ def run_svm_classifier(X_test, X_train, y_train, y_test, kernel='linear'):
     return classifier, accuracy
 
 
-def plot_results(classifiers=('linear', 'rbf', 'poly', 'sig'), titles =['Linear kernel', 'RBF kernel', 'Polynomial kernel', 'Sigmoid kernel']):
+def convert_labels_to_ints(y, label_type='facial_exp_labels'):
+    if label_type=='facial_exp_labels':
+        labels_to_num_facial_exp = {'NE':0, 'FR':1, 'SM':2, 'OF':3}
+
+    elif label_type == 'verbal_labels':
+        labels_to_num_facial_exp = {'SP':0, 'NS':1, 'SL':2}
+    else:
+        print ("does not support label type")
+    return [labels_to_num_facial_exp[label] for label in y]
+
+
+def reduce_dim(X):
+    X_embedded = TSNE(n_components=2, learning_rate='auto', init = 'random', perplexity = 3).fit_transform(X)
+    return X_dimensions
+
+def plot_results_2(X,y, models, titles):
+    '''
+    # Set-up 2x2 grid for plotting.
+    fig, sub = plt.subplots(2, 2)
+    plt.subplots_adjust(wspace=0.4, hspace=0.4)
+    '''
+    # Set-up 2x2 grid for plotting.
+    fig, sub = plt.subplots(2, 2)
+    plt.subplots_adjust(wspace=0.4, hspace=0.4)
+
+    X0, X1 = X[:, 0], X[:, 1]
+
+    for clf, title, ax in zip(models, titles, sub.flatten()):
+        disp = DecisionBoundaryDisplay.from_estimator(
+            clf,
+            X,
+            response_method="predict",
+            cmap=plt.cm.coolwarm,
+            alpha=0.8,
+            ax=ax
+        )
+        ax.scatter(X0, X1, c=y, cmap=plt.cm.coolwarm, s=20, edgecolors="k")
+        ax.set_xticks(())
+        ax.set_yticks(())
+        ax.set_title(title)
+
+    plt.show()
+
+
+
+
+def plot_results(X, y, classifiers, titles =['Linear kernel', 'RBF kernel', 'Polynomial kernel', 'Sigmoid kernel']):
     # stepsize in the mesh, it alters the accuracy of the plotprint
     # to better understand it, just play with the value, change it and print it
     h = .01
@@ -211,6 +261,8 @@ def plot_results(classifiers=('linear', 'rbf', 'poly', 'sig'), titles =['Linear 
         # space between plots
         plt.subplots_adjust(wspace=0.4, hspace=0.4)
         Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
+        Z = convert_labels_to_ints(Z, label_type='facial_exp_labels')
+        Z = np.array(Z)
         # Put the result into a color plot
         Z = Z.reshape(xx.shape)
         plt.contourf(xx, yy, Z, cmap=plt.cm.PuBuGn, alpha=0.7)
@@ -223,8 +275,9 @@ def plot_results(classifiers=('linear', 'rbf', 'poly', 'sig'), titles =['Linear 
         plt.xticks(())
         plt.yticks(())
         plt.title(titles[i])
-        plt.show()
+        print("done")
+    plt.show()
 
 
-#labels = get_labels_from_file(file_path='.\ep 1.xlsx')
-#print(labels[1]['facial_exp_labels'][158], labels[1]['facial_exp_labels'][160])
+labels = get_labels_from_file(file_path='.\ep 1.xlsx')
+print(labels[1]['facial_exp_labels'][158], labels[1]['facial_exp_labels'][160])

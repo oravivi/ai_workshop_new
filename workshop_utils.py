@@ -58,7 +58,7 @@ def get_angle_between_three_points(point1, point2, point3):
     cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
     angle = np.arccos(cosine_angle)
 
-    return angle
+    return 0.0000001 if np.isnan(angle) else angle
 
 def convert_row_to_column(row):
     return np.array(row).reshape(-1, 1)
