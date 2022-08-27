@@ -12,6 +12,7 @@ import random
 import json
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
+from sklearn.inspection import DecisionBoundaryDisplay
 
 
 # 'X' the matrix with the extracted features for each classification
@@ -136,7 +137,7 @@ def get_labels_from_file(file_path='ep 1.xlsx'):
 # a row in X represents a specific feature, a column in X represents a specific frame
 # y - a vector of labels
 def run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear'):
-    C = 1
+    C = 10
     if kernel=='linear':
         classifier = svm.SVC(C=C, kernel='linear', decision_function_shape='ovo').fit(X_train, y_train)
     elif kernel=='rbf':
@@ -165,30 +166,37 @@ def convert_labels_to_ints(y, label_type='facial_exp_labels'):
 
 
 def reduce_dim(X):
-    # initialise the standard scaler
-    sc = StandardScaler()
-    # create a copy of the original dataset
-    X_rs = X.copy()
-    # fit transform all of our data
-    for c in X_rs.columns:
-        X_rs[c] = sc.fit_transform(X_rs[c].values.reshape(-1, 1))
-    # set the hyperparmateres
-    keep_dims = 2
-    lrn_rate = 700
-    prp = 40
-    # extract the data as a cop
-    tsnedf = X_rs.copy()
-    # create the model
-    tsne = TSNE(n_components=keep_dims,
-                perplexity=prp,
-                random_state=42,
-                n_iter=5000,
-                n_jobs=-1)
-    # apply it to the data
-    X_dimensions = tsne.fit_transform(tsnedf)
-    # check the shape
-    print(X_dimensions.shape)
+    X_embedded = TSNE(n_components=2, learning_rate='auto', init = 'random', perplexity = 3).fit_transform(X)
     return X_dimensions
+
+def plot_results_2(X,y, models, titles):
+    '''
+    # Set-up 2x2 grid for plotting.
+    fig, sub = plt.subplots(2, 2)
+    plt.subplots_adjust(wspace=0.4, hspace=0.4)
+    '''
+    # Set-up 2x2 grid for plotting.
+    fig, sub = plt.subplots(2, 2)
+    plt.subplots_adjust(wspace=0.4, hspace=0.4)
+
+    X0, X1 = X[:, 0], X[:, 1]
+
+    for clf, title, ax in zip(models, titles, sub.flatten()):
+        disp = DecisionBoundaryDisplay.from_estimator(
+            clf,
+            X,
+            response_method="predict",
+            cmap=plt.cm.coolwarm,
+            alpha=0.8,
+            ax=ax
+        )
+        ax.scatter(X0, X1, c=y, cmap=plt.cm.coolwarm, s=20, edgecolors="k")
+        ax.set_xticks(())
+        ax.set_yticks(())
+        ax.set_title(title)
+
+    plt.show()
+
 
 
 
@@ -223,7 +231,9 @@ def plot_results(X, y, classifiers, titles =['Linear kernel', 'RBF kernel', 'Pol
         plt.xticks(())
         plt.yticks(())
         plt.title(titles[i])
-        plt.show()
+        print("done")
+    plt.show()
+
 
 
 #labels = get_labels_from_file(file_path='.\ep 1.xlsx')

@@ -89,7 +89,10 @@ def extract_features_from_coordinates(infant_dict, frames_num):
     #infant
     infant_features_matrix.append(left_eyebrow_center_to_eye_dist(infant_dict, frames_num))
     infant_features_matrix.append(right_eyebrow_center_to_eye_dist(infant_dict, frames_num))
-    #infant_features_matrix.append(mouth_edges_to_lower_lip_angle(infant_dict, frames_num))
+    infant_features_matrix.append(mouth_edges_to_lower_lip_angle(infant_dict, frames_num))
+    infant_features_matrix.append(mouth_right_angle(infant_dict, frames_num))
+    infant_features_matrix.append(mouth_left_angle(infant_dict, frames_num))
+    infant_features_matrix.append(eyebrows_dist(infant_dict, frames_num))
     #adult
     #adult_features_matrix.append(left_eyebrow_center_to_eye_dist(adult_dict, frames_num))
     #adult_features_matrix.append(right_eyebrow_center_to_eye_dist(adult_dict, frames_num))
@@ -158,15 +161,14 @@ if __name__ == '__main__':
     labels = get_labels_from_file(file_path='ep 1.xlsx')
     y = [labels[converted_sub_no_labels]['facial_exp_labels'][i] for i in range(frames_to_skip, frame_num)]
     X_train, X_test, y_train, y_test = split_data(infant_x, y, train_ratio=0.2)
-    print(X_train)
     linear_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')
-    rbf_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')
-    poly_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear') #TODO change back to poly
-    sig_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='sigmoid')
+    #rbf_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')
+    #poly_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear') #TODO change back to poly
+    #sig_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='sigmoid')
     y_nums = convert_labels_to_ints(y, label_type='facial_exp_labels')
-    plot_results(infant_x, y_nums, classifiers=(linear_clf, rbf_clf, poly_clf, sig_clf),
-                 titles=['Linear kernel', 'RBF kernel', 'Polynomial kernel', 'Sigmoid kernel'])
-
+    infant_x_2d = reduce_dim(infant_x)
+    #plot_results(infant_x, y_nums, classifiers=(linear_clf, rbf_clf, poly_clf, sig_clf),titles=['Linear kernel', 'RBF kernel', 'Polynomial kernel', 'Sigmoid kernel'])
+    plot_results_2(infant_x, y_nums, models=[linear_clf, linear_clf, linear_clf,linear_clf],titles=['Linear kernel', 'Linear kernel','Linear kernel', 'Linear kernel'])
 
 
 
