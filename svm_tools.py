@@ -166,7 +166,7 @@ def convert_labels_to_ints(y, label_type='facial_exp_labels'):
 
 
 def reduce_dim(X):
-    X_embedded = TSNE(n_components=2, learning_rate='auto', init = 'random', perplexity = 3).fit_transform(X)
+    X_dimensions = TSNE(n_components=2, learning_rate='auto', init = 'random', perplexity = 30).fit_transform(X)
     return X_dimensions
 
 def plot_results_2(X,y, models, titles):

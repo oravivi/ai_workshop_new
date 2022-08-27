@@ -35,7 +35,13 @@ if __name__ == '__main__':
              'inner_lip_right_corner',
              'inner_bottom_lip_1',
              'inner_bottom_lip_2',
-             'inner_bottom_lip_3'
+             'inner_bottom_lip_3',
+             'right_eyelid_1',
+             'right_eyelid_2',
+             'right_eyelid_3',
+             'left_eyelid_1',
+             'left_eyelid_2',
+             'left_eyelid_3',
              ]
     mouth_features = {"right inner corner" : [63, 64, 65],
                       "right outer corner" : [53, 54, 55],
@@ -43,10 +49,11 @@ if __name__ == '__main__':
                       "left outer corner" : [49, 48, 59]}
 
     # numbers = [60, 61, 62, 63, 64, 65, 66, 67, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 7, 8, 9, 31, 33, 35]
-    numbers = [7, 8, 9, 31, 33, 35, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67]
+    numbers = [7, 8, 9, 31, 33, 35, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67,
+               44, 45, 46, 37, 36, 41]
 
     start_from_frame = 30
-    until_frame = 3000
+    until_frame = 3500
     coordinates_dict = extract_coordinates_for_all_frames(person_id=0,
                                                           start_from_frame=start_from_frame,
                                                           until_frame=until_frame,
@@ -59,27 +66,83 @@ if __name__ == '__main__':
     mouth_right_outer_corner_angles = []
     mouth_left_inner_corner_angles = []
     mouth_left_outer_corner_angles = []
-    for i in range(2970):
-        mouth_right_inner_corner_angles.append(get_angle_between_three_points(
-            (coordinates_dict['inner_upper_lip_3'][i][0], coordinates_dict['inner_upper_lip_3'][i][1]),
-            (coordinates_dict['inner_lip_right_corner'][i][0], coordinates_dict['inner_lip_right_corner'][i][1]),
-            (coordinates_dict['inner_bottom_lip_1'][i][0], coordinates_dict['inner_bottom_lip_1'][i][1])))
+    right_eye_angles = []
+    left_eye_angles = []
+    right_eye_features = []
+    left_eye_features = []
+    mouth_right_inner_corner_x = []
+    mouth_right_inner_corner_y = []
+    mouth_left_inner_corner_x = []
+    mouth_left_inner_corner_y = []
+    mustache_right_edge_x = []
+    mustache_right_edge_y = []
+    outer_upper_lip_3_x = []
+    outer_upper_lip_3_y = []
+    outer_bottom_lip_3_x = []
+    outer_bottom_lip_3_y = []
+    for i in range(3470):
+        # mouth_right_inner_corner_angles.append(get_angle_between_three_points(
+        #     (coordinates_dict['inner_upper_lip_3'][i][0], coordinates_dict['inner_upper_lip_3'][i][1]),
+        #     (coordinates_dict['inner_lip_right_corner'][i][0], coordinates_dict['inner_lip_right_corner'][i][1]),
+        #     (coordinates_dict['inner_bottom_lip_1'][i][0], coordinates_dict['inner_bottom_lip_1'][i][1])))
 
-        mouth_right_outer_corner_angles.append(get_angle_between_three_points((coordinates_dict['outer_upper_lip_5'][i][0], coordinates_dict['outer_upper_lip_5'][i][1]),
-                                                                              (coordinates_dict['outer_lip_right_corner'][i][0], coordinates_dict['outer_lip_right_corner'][i][1]),
-                                                                              (coordinates_dict['outer_bottom_lip_1'][i][0], coordinates_dict['outer_bottom_lip_1'][i][1])))
+        # mouth_right_inner_corner_x.append(coordinates_dict['inner_lip_right_corner'][i][0])
+        # mouth_right_inner_corner_y.append(coordinates_dict['inner_lip_right_corner'][i][1])
+        # mouth_left_inner_corner_x.append(coordinates_dict['inner_lip_left_corner'][i][0])
+        # mouth_left_inner_corner_y.append(coordinates_dict['inner_lip_left_corner'][i][1])
+        mustache_right_edge_x.append(coordinates_dict['mustache_right_edge'][i][0])
+        mustache_right_edge_y.append(coordinates_dict['mustache_right_edge'][i][1])
+        outer_upper_lip_3_x.append(coordinates_dict['outer_upper_lip_3'][i][0])
+        outer_upper_lip_3_y.append(coordinates_dict['outer_upper_lip_3'][i][1])
+        outer_bottom_lip_3_x.append(coordinates_dict['outer_bottom_lip_3'][i][0])
+        outer_bottom_lip_3_y.append(coordinates_dict['outer_bottom_lip_3'][i][1])
 
-        mouth_left_inner_corner_angles.append(get_angle_between_three_points((coordinates_dict['inner_upper_lip_1'][i][0], coordinates_dict['inner_upper_lip_1'][i][1]),
-                                                                             (coordinates_dict['inner_lip_left_corner'][i][0], coordinates_dict['inner_lip_left_corner'][i][1]),
-                                                                             (coordinates_dict['inner_bottom_lip_3'][i][0], coordinates_dict['inner_bottom_lip_3'][i][1])))
 
-        mouth_left_outer_corner_angles.append(get_angle_between_three_points((coordinates_dict['outer_upper_lip_1'][i][0], coordinates_dict['outer_upper_lip_1'][i][1]),
-                                                                             (coordinates_dict['outer_lip_left_corner'][i][0], coordinates_dict['outer_lip_left_corner'][i][1]),
-                                                                             (coordinates_dict['outer_bottom_lip_5'][i][0], coordinates_dict['outer_bottom_lip_5'][i][1])))
-    temp_X = [np.array(mouth_right_inner_corner_angles).reshape(-1, 1),
-              np.array(mouth_right_outer_corner_angles).reshape(-1, 1),
-              np.array(mouth_left_inner_corner_angles).reshape(-1, 1),
-              np.array(mouth_left_outer_corner_angles).reshape(-1, 1)]
+        mouth_right_outer_corner_angles.append(get_angle_between_three_points(
+            (coordinates_dict['outer_upper_lip_5'][i][0], coordinates_dict['outer_upper_lip_5'][i][1]),
+            (coordinates_dict['outer_lip_right_corner'][i][0], coordinates_dict['outer_lip_right_corner'][i][1]),
+            (coordinates_dict['outer_bottom_lip_1'][i][0], coordinates_dict['outer_bottom_lip_1'][i][1])))
+
+        mouth_left_inner_corner_angles.append(get_angle_between_three_points(
+            (coordinates_dict['inner_upper_lip_1'][i][0], coordinates_dict['inner_upper_lip_1'][i][1]),
+            (coordinates_dict['inner_lip_left_corner'][i][0], coordinates_dict['inner_lip_left_corner'][i][1]),
+            (coordinates_dict['inner_bottom_lip_3'][i][0], coordinates_dict['inner_bottom_lip_3'][i][1])))
+
+        mouth_left_outer_corner_angles.append(get_angle_between_three_points(
+            (coordinates_dict['outer_upper_lip_1'][i][0], coordinates_dict['outer_upper_lip_1'][i][1]),
+            (coordinates_dict['outer_lip_left_corner'][i][0], coordinates_dict['outer_lip_left_corner'][i][1]),
+            (coordinates_dict['outer_bottom_lip_5'][i][0], coordinates_dict['outer_bottom_lip_5'][i][1])))
+
+        right_eye_angles.append(get_angle_between_three_points(
+            (coordinates_dict['right_eyelid_1'][i][0], coordinates_dict['right_eyelid_1'][i][1]),
+            (coordinates_dict['right_eyelid_2'][i][0], coordinates_dict['right_eyelid_2'][i][1]),
+            (coordinates_dict['right_eyelid_3'][i][0], coordinates_dict['right_eyelid_3'][i][1])
+        ))
+
+        left_eye_angles.append(get_angle_between_three_points(
+            (coordinates_dict['left_eyelid_1'][i][0], coordinates_dict['left_eyelid_1'][i][1]),
+            (coordinates_dict['left_eyelid_2'][i][0], coordinates_dict['left_eyelid_2'][i][1]),
+            (coordinates_dict['left_eyelid_3'][i][0], coordinates_dict['left_eyelid_3'][i][1])
+        ))
+
+        # right_eye_features.append(((mouth_right_inner_corner_angles[i] + mouth_right_outer_corner_angles[i]) / 2) * right_eye_angles[i])
+        # left_eye_features.append(((mouth_left_inner_corner_angles[i] + mouth_left_outer_corner_angles[i]) / 2) * left_eye_angles[i])
+
+
+    # temp_X = [np.array(mouth_right_inner_corner_angles).reshape(-1, 1),
+    #           np.array(mouth_right_outer_corner_angles).reshape(-1, 1),
+    #           np.array(mouth_left_inner_corner_angles).reshape(-1, 1),
+    #           np.array(mouth_left_outer_corner_angles).reshape(-1, 1),
+    #           np.array(right_eye_angles).reshape(-1, 1),
+    #           np.array(left_eye_angles).reshape(-1, 1)
+    #           ]
+    temp_X = [np.array(mustache_right_edge_x).reshape(-1, 1),
+              np.array(mustache_right_edge_y).reshape(-1, 1),
+              np.array(outer_upper_lip_3_x).reshape(-1, 1),
+              np.array(outer_upper_lip_3_y).reshape(-1, 1),
+              np.array(outer_bottom_lip_3_x).reshape(-1, 1),
+              np.array(outer_bottom_lip_3_y).reshape(-1, 1),
+              ]
 
     X = np.concatenate(temp_X, axis=1)
     # X = np.transpose(X)
@@ -89,17 +152,20 @@ if __name__ == '__main__':
     infant_features_matrix = np.concatenate(infant_features_matrix, axis=1)
 
     labels = get_labels_from_file(file_path='ep 1.xlsx')
-    y = [labels[1]['verbal_labels'][i] for i in range(start_from_frame, 3000)]
-    X_train, X_test, y_train, y_test = split_data(infant_features_matrix, y, train_ratio=0.2)
+    y = [labels[1]['verbal_labels'][i] for i in range(start_from_frame, 3500)]
+    infant_x_2d = reduce_dim(infant_features_matrix)
+    X_train, X_test, y_train, y_test = split_data(infant_x_2d, y, train_ratio=0.2)
     print(X_train)
     classifiers = []
-    classifiers.append(run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')[0])
     classifiers.append(run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')[0])
-    classifiers.append(run_svm_classifier(X_train, X_test, y_train, y_test, kernel='poly')[0])
-    classifiers.append(run_svm_classifier(X_train, X_test, y_train, y_test, kernel='sigmoid')[0])
-    titles = ['linear', 'rbf', 'poly', 'sigmoid']
+    classifiers.append(run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')[0])
+    classifiers.append(run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')[0])
+    classifiers.append(run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')[0])
+    titles = ['linear', 'rbf', 'linear', 'sigmoid']
     labels_for_plot = convert_labels_to_ints(y=y, label_type='verbal_labels')
-    plot_results(infant_features_matrix, y, classifiers, titles)
+
+    plot_results_2(infant_x_2d, labels_for_plot, classifiers, titles)
+    print(np.histogram(labels_for_plot))
 
 
 
