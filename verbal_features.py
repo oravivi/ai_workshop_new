@@ -81,7 +81,7 @@ if __name__ == '__main__':
               np.array(mouth_left_inner_corner_angles).reshape(-1, 1),
               np.array(mouth_left_outer_corner_angles).reshape(-1, 1)]
 
-    # X = np.concatenate(temp_X, axis=1)
+    X = np.concatenate(temp_X, axis=1)
     # X = np.transpose(X)
     infant_features_matrix = []
     for feature in temp_X:
@@ -89,14 +89,17 @@ if __name__ == '__main__':
     infant_features_matrix = np.concatenate(infant_features_matrix, axis=1)
 
     labels = get_labels_from_file(file_path='ep 1.xlsx')
-    y = [labels[1]['facial_exp_labels'][i] for i in range(start_from_frame, 3000)]
+    y = [labels[1]['verbal_labels'][i] for i in range(start_from_frame, 3000)]
     X_train, X_test, y_train, y_test = split_data(infant_features_matrix, y, train_ratio=0.2)
     print(X_train)
-    classifier, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')
-    classifier, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')
-    classifier, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='poly')
-    classifier, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='sigmoid')
-
+    classifiers = []
+    classifiers.append(run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')[0])
+    classifiers.append(run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')[0])
+    classifiers.append(run_svm_classifier(X_train, X_test, y_train, y_test, kernel='poly')[0])
+    classifiers.append(run_svm_classifier(X_train, X_test, y_train, y_test, kernel='sigmoid')[0])
+    titles = ['linear', 'rbf', 'poly', 'sigmoid']
+    labels_for_plot = convert_labels_to_ints(y=y, label_type='verbal_labels')
+    plot_results(infant_features_matrix, y, classifiers, titles)
 
 
 

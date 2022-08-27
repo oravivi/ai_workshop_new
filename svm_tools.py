@@ -156,6 +156,9 @@ def run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear'):
 def convert_labels_to_ints(y, label_type='facial_exp_labels'):
     if label_type=='facial_exp_labels':
         labels_to_num_facial_exp = {'NE':0, 'FR':1, 'SM':2, 'OF':3}
+
+    elif label_type == 'verbal_labels':
+        labels_to_num_facial_exp = {'SP':0, 'NS':1, 'SL':2}
     else:
         print ("does not support label type")
     return [labels_to_num_facial_exp[label] for label in y]
