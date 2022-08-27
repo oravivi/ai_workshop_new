@@ -10,6 +10,8 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 import random
 import json
+from sklearn.manifold import TSNE
+from sklearn.preprocessing import StandardScaler
 
 
 # 'X' the matrix with the extracted features for each classification
@@ -136,15 +138,14 @@ def get_labels_from_file(file_path='ep 1.xlsx'):
 def run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear'):
     C = 1
     if kernel=='linear':
-        classifier = svm.SVC(C=C, kernel='linear', decision_function_shape='ovo')
+        classifier = svm.SVC(C=C, kernel='linear', decision_function_shape='ovo').fit(X_train, y_train)
     elif kernel=='rbf':
-        classifier = svm.SVC(kernel='rbf', gamma=1, C=C, decision_function_shape='ovo').fit(X_train, y_train)
+        classifier = svm.SVC(kernel='rbf', gamma=1, C=C, decision_function_shape='ovo').fit(X_train, y_train).fit(X_train, y_train)
     elif kernel=='poly':
-        classifier = svm.SVC(kernel='poly', degree=3, C=C, decision_function_shape='ovo').fit(X_train, y_train)
+        classifier = svm.SVC(kernel='poly', degree=3, C=C, decision_function_shape='ovo').fit(X_train, y_train).fit(X_train, y_train)
     elif kernel=='sigmoid':
         classifier = svm.SVC(kernel='sigmoid', C=C, decision_function_shape='ovo').fit(X_train, y_train)
     y_prediction = []
-    classifier.set_params(kernel=kernel).fit(X_train, y_train)
     for x in X_test:
         y_prediction.append(classifier.predict(x.reshape(1, -1)))
     accuracy = sklearn.metrics.accuracy_score(y_test, y_prediction)
@@ -152,7 +153,43 @@ def run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear'):
     return classifier, accuracy
 
 
-def plot_results(classifiers=('linear', 'rbf', 'poly', 'sig'), titles =['Linear kernel', 'RBF kernel', 'Polynomial kernel', 'Sigmoid kernel']):
+def convert_labels_to_ints(y, label_type='facial_exp_labels'):
+    if label_type=='facial_exp_labels':
+        labels_to_num_facial_exp = {'NE':0, 'FR':1, 'SM':2, 'OF':3}
+    else:
+        print ("does not support label type")
+    return [labels_to_num_facial_exp[label] for label in y]
+
+
+def reduce_dim(X):
+    # initialise the standard scaler
+    sc = StandardScaler()
+    # create a copy of the original dataset
+    X_rs = X.copy()
+    # fit transform all of our data
+    for c in X_rs.columns:
+        X_rs[c] = sc.fit_transform(X_rs[c].values.reshape(-1, 1))
+    # set the hyperparmateres
+    keep_dims = 2
+    lrn_rate = 700
+    prp = 40
+    # extract the data as a cop
+    tsnedf = X_rs.copy()
+    # create the model
+    tsne = TSNE(n_components=keep_dims,
+                perplexity=prp,
+                random_state=42,
+                n_iter=5000,
+                n_jobs=-1)
+    # apply it to the data
+    X_dimensions = tsne.fit_transform(tsnedf)
+    # check the shape
+    print(X_dimensions.shape)
+    return X_dimensions
+
+
+
+def plot_results(X, y, classifiers, titles =['Linear kernel', 'RBF kernel', 'Polynomial kernel', 'Sigmoid kernel']):
     # stepsize in the mesh, it alters the accuracy of the plotprint
     # to better understand it, just play with the value, change it and print it
     h = .01
@@ -169,6 +206,8 @@ def plot_results(classifiers=('linear', 'rbf', 'poly', 'sig'), titles =['Linear 
         # space between plots
         plt.subplots_adjust(wspace=0.4, hspace=0.4)
         Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
+        Z = convert_labels_to_ints(Z, label_type='facial_exp_labels')
+        Z = np.array(Z)
         # Put the result into a color plot
         Z = Z.reshape(xx.shape)
         plt.contourf(xx, yy, Z, cmap=plt.cm.PuBuGn, alpha=0.7)

@@ -39,8 +39,14 @@ def right_eyebrow_edges_to_center_angle():
 
 
 # distance between the eyebrows
-def eyebrows_dist():
-    pass
+def eyebrows_dist(coordinates_dict: dict, frames_num):
+    distances = []
+    for i in range(frames_num):
+        dist = distance_between_2_points(
+            (coordinates_dict['left_eyebrow_right_edge'][i][0], coordinates_dict['left_eyebrow_right_edge'][i][1]),
+            (coordinates_dict['right_eyebrow_left_edge'][i][0], coordinates_dict['right_eyebrow_left_edge'][i][1]))
+        distances.append(dist)
+    return convert_row_to_column(distances)
 
 
 # angle between the mouth edges line and the upper lip (bottom)
@@ -55,12 +61,26 @@ def mouth_edges_to_lower_lip_angle(coordinates_dict, frames_num):
     return convert_row_to_column(angles)
 
 
-def mouth_left_angle():
-    pass
+def mouth_left_angle(coordinates_dict, frames_num):
+    angles = []
+    for i in range(frames_num):
+        dist = get_angle_between_three_points(
+            (coordinates_dict['mouth_upper_lip_top_2'][i][0], coordinates_dict['mouth_upper_lip_top_2'][i][1]),
+            (coordinates_dict['mouth_left_edge'][i][0], coordinates_dict['mouth_left_edge'][i][1]),
+            (coordinates_dict['mouth_lower_lip_bottom_2'][i][0], coordinates_dict['mouth_lower_lip_bottom_2'][i][1]))
+        angles.append(dist)
+    return convert_row_to_column(angles)
 
 
-def mouth_right_angle():
-    pass
+def mouth_right_angle(coordinates_dict, frames_num):
+    angles = []
+    for i in range(frames_num):
+        dist = get_angle_between_three_points(
+            (coordinates_dict['mouth_upper_lip_top_2'][i][0], coordinates_dict['mouth_upper_lip_top_2'][i][1]),
+            (coordinates_dict['mouth_right_edge'][i][0], coordinates_dict['mouth_right_edge'][i][1]),
+            (coordinates_dict['mouth_lower_lip_bottom_2'][i][0], coordinates_dict['mouth_lower_lip_bottom_2'][i][1]))
+        angles.append(dist)
+    return convert_row_to_column(angles)
 
 
 def extract_features_from_coordinates(infant_dict, frames_num):
@@ -139,10 +159,13 @@ if __name__ == '__main__':
     y = [labels[converted_sub_no_labels]['facial_exp_labels'][i] for i in range(frames_to_skip, frame_num)]
     X_train, X_test, y_train, y_test = split_data(infant_x, y, train_ratio=0.2)
     print(X_train)
-    classifier, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')
-    classifier, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')
-    classifier, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='poly')
-    classifier, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='sigmoid')
+    linear_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')
+    rbf_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')
+    poly_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear') #TODO change back to poly
+    sig_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='sigmoid')
+    y_nums = convert_labels_to_ints(y, label_type='facial_exp_labels')
+    plot_results(infant_x, y_nums, classifiers=(linear_clf, rbf_clf, poly_clf, sig_clf),
+                 titles=['Linear kernel', 'RBF kernel', 'Polynomial kernel', 'Sigmoid kernel'])
 
 
 
