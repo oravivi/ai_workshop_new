@@ -33,6 +33,7 @@ def distance_between_2_points(point_a,point_b):
     y_dist=abs(point_b[1]-point_b[1])
     return math.sqrt(x_dist**2+y_dist**2)
 
+
 def avg_2_points(point_a,point_b):
     new_point=((point_a[0]+point_b[0])/2,(point_a[1]+point_b[1])/2,(point_a[2]+point_a[2]/2))
     return new_point
