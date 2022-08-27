@@ -14,6 +14,49 @@ from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
 from sklearn.inspection import DecisionBoundaryDisplay
 
+subjects_dict={"611_3m" :1,
+               "611_6m" :2,
+               "3447_3m" :3,
+               "3447_6m" :4,
+               "409_3m" :5,
+               "409_6m" :6,
+               "2529_3m" :7,
+               "2529_6m" :8,
+               "2730_3m" :9,
+               "2730_6m" :10,
+               "2831_3m" :11,
+               "2831_6m" :12,
+               "3548_3m" :13,
+               "3548_6m" :14,
+               "3750_3m" :15,
+               "3750_6m" :16,
+               "4051_3m" :17,
+               "4051_6m" :18,
+               "3649_3m" :19,
+               "3649_6m" :20,
+               "4555_3m" :21,
+               "4555_6m" :22,
+               "6267_3m" :23,
+               "6267_6m" :24,
+               "6569_3m" :25,
+               "6569_6m" :26,
+               "6064_3m" :27,
+               "6064_6m" :28,
+               "6166_3m" :29,
+               "6166_6m" :30,
+               "4656_3m" :31,
+               "4656_6m" :32,
+               "7275_3m" :33,
+               "7275_6m" :34,
+               "5458_3m" :35,
+               "5458_6m" :36,
+               "7477_3m" :37,
+               "7477_6m" :38,
+               "7678_3m" :39,
+               "7678_6m" :40
+
+               }
+
 
 # 'X' the matrix with the extracted features for each classification
 # a row in X represents a specific feature, a column in X represents a specific frame
@@ -33,6 +76,20 @@ def split_data(X, y, train_ratio=0.2):
             y_train.append(y[i])
     return X_train, X_test, y_train, y_test
 
+def split_data_not_random(X, y, number_of_train_videos,number_of_test_videos,number_of_frames_per_video):
+    test_points_indexes = np.concatenate((np.zeros(number_of_train_videos*number_of_frames_per_video), np.ones(number_of_test_videos*number_of_frames_per_video)), axis=0)
+    X_train = []
+    y_train = []
+    X_test = []
+    y_test = []
+    for i, test_point in enumerate(test_points_indexes):
+        if test_point:
+            X_test.append(X[i])
+            y_test.append(y[i])
+        else:
+            X_train.append(X[i])
+            y_train.append(y[i])
+    return X_train, X_test, y_train, y_test
 
 def get_facial_exp_row(row):
     NE, FR, SM, OF = row['NE.'], row['FR.'], row['SM.'], row['OF.']
@@ -99,7 +156,7 @@ def get_labels_from_file(file_path='ep 1.xlsx'):
                              'hands_labels':[]
                                      }
         labels_data[i+1] = subject_labels
-    #print(labels_data)
+    print(labels_data)
     labels_from_excel = pd.read_excel(file_path)
     rows = labels_from_excel.iterrows()
     for i, row in rows:
@@ -136,32 +193,35 @@ def get_labels_from_file(file_path='ep 1.xlsx'):
 # 'X' the matrix with the extracted features for each classification
 # a row in X represents a specific feature, a column in X represents a specific frame
 # y - a vector of labels
-def run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear'):
-    C = 10
+def run_svm_classifier(X_test, X_train, y_test ,y_train, kernel):
+    C=10
     if kernel=='linear':
         classifier = svm.SVC(C=C, kernel='linear', decision_function_shape='ovo').fit(X_train, y_train)
     elif kernel=='rbf':
-        classifier = svm.SVC(kernel='rbf', gamma=1, C=C, decision_function_shape='ovo').fit(X_train, y_train).fit(X_train, y_train)
+        classifier = svm.SVC(kernel='rbf', gamma=1, C=C, decision_function_shape='ovo').fit(X_train, y_train)
     elif kernel=='poly':
-        classifier = svm.SVC(kernel='poly', degree=3, C=C, decision_function_shape='ovo').fit(X_train, y_train).fit(X_train, y_train)
+        classifier = svm.SVC(kernel='poly', degree=3, C=C, decision_function_shape='ovo').fit(X_train, y_train)
     elif kernel=='sigmoid':
         classifier = svm.SVC(kernel='sigmoid', C=C, decision_function_shape='ovo').fit(X_train, y_train)
     y_prediction = []
+    #classifier.set_params(kernel='linear').fit(X_train, y_train)
     for x in X_test:
         y_prediction.append(classifier.predict(x.reshape(1, -1)))
     accuracy = sklearn.metrics.accuracy_score(y_test, y_prediction)
-    print(accuracy)
+    print(kernel, accuracy)
     return classifier, accuracy
 
 
 def convert_labels_to_ints(y, label_type='facial_exp_labels'):
     if label_type=='facial_exp_labels':
         labels_to_num_facial_exp = {'NE':0, 'FR':1, 'SM':2, 'OF':3}
-
     elif label_type == 'verbal_labels':
         labels_to_num_facial_exp = {'SP':0, 'NS':1, 'SL':2}
+    elif label_type == 'gaze_labels':
+        labels_to_num_facial_exp = {'GS': 0, 'FG': 1, 'OG': 2}
     else:
         print ("does not support label type")
+    [labels_to_num_facial_exp[label] for label in y]
     return [labels_to_num_facial_exp[label] for label in y]
 
 
@@ -232,7 +292,6 @@ def plot_results(X, y, classifiers, titles =['Linear kernel', 'RBF kernel', 'Pol
         plt.title(titles[i])
         print("done")
     plt.show()
-
 
 
 #labels = get_labels_from_file(file_path='.\ep 1.xlsx')
