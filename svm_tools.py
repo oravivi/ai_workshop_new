@@ -163,29 +163,7 @@ def convert_labels_to_ints(y, label_type='facial_exp_labels'):
 
 
 def reduce_dim(X):
-    # initialise the standard scaler
-    sc = StandardScaler()
-    # create a copy of the original dataset
-    X_rs = X.copy()
-    # fit transform all of our data
-    for c in X_rs.columns:
-        X_rs[c] = sc.fit_transform(X_rs[c].values.reshape(-1, 1))
-    # set the hyperparmateres
-    keep_dims = 2
-    lrn_rate = 700
-    prp = 40
-    # extract the data as a cop
-    tsnedf = X_rs.copy()
-    # create the model
-    tsne = TSNE(n_components=keep_dims,
-                perplexity=prp,
-                random_state=42,
-                n_iter=5000,
-                n_jobs=-1)
-    # apply it to the data
-    X_dimensions = tsne.fit_transform(tsnedf)
-    # check the shape
-    print(X_dimensions.shape)
+    X_embedded = TSNE(n_components=2, learning_rate='auto', init = 'random', perplexity = 3).fit_transform(X)
     return X_dimensions
 
 def plot_results_2(X,y, models, titles):
