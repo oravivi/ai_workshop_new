@@ -187,53 +187,35 @@ def get_feature_matrices(sub_no, frames_to_skip, frames_num):
 if __name__ == '__main__':
     label_group="gaze_labels"
     frames_to_skip=30
-    frame_num=3000 #TODO use the number of frames in the directory
-    subjects_train = os.listdir("subjects")[0:7]
-    subjects_test = os.listdir("subjects")[7:9]
-    y_train=[]
-    infant_x_train=0
-    for sub_no_from_file in subjects_train:
+    frame_num=300 #TODO use the number of frames in the directory
+    subjects = os.listdir("subjects")[0:2]
+    y=[]
+    infant_x=0
+    for sub_no_from_file in subjects:
+        print(sub_no_from_file)
         #sub_no_from_file = '611_3m'
         converted_sub_no_labels = subjects_dict[sub_no_from_file] #TODO use dict to convert from the file name to sub_no
         labels = get_labels_from_file(file_path='ep 1.xlsx')
-        y_train.extend([labels[converted_sub_no_labels][label_group][i] for i in range(frames_to_skip, frame_num)])
-        if (isinstance(infant_x_train, int)):
-            infant_x_train = get_feature_matrices(frames_num=frame_num, frames_to_skip=frames_to_skip, sub_no=sub_no_from_file)
+        y.extend([labels[converted_sub_no_labels][label_group][i] for i in range(frames_to_skip, frame_num)])
+        if (isinstance(infant_x, int)):
+            infant_x = get_feature_matrices(frames_num=frame_num, frames_to_skip=frames_to_skip, sub_no=sub_no_from_file)
         else:
-            infant_x_train=np.vstack((infant_x_train,get_feature_matrices(frames_num=frame_num, frames_to_skip=frames_to_skip, sub_no=sub_no_from_file)))
-    print(len(y_train))
-    print(type(infant_x_train),print(infant_x_train.shape))
-
-    y_test = []
-    infant_x_test = 0
-    for sub_no_from_file in subjects_test:
-        # sub_no_from_file = '611_3m'
-        converted_sub_no_labels = subjects_dict[
-            sub_no_from_file]  # TODO use dict to convert from the file name to sub_no
-        labels = get_labels_from_file(file_path='ep 1.xlsx')
-        y_test.extend([labels[converted_sub_no_labels][label_group][i] for i in range(frames_to_skip, frame_num)])
-        if (isinstance(infant_x_test, int)):
-            infant_x_test = get_feature_matrices(frames_num=frame_num, frames_to_skip=frames_to_skip,
-                                                  sub_no=sub_no_from_file)
-        else:
-            infant_x_test = np.vstack((infant_x_test,
-                                        get_feature_matrices(frames_num=frame_num, frames_to_skip=frames_to_skip,
-                                                             sub_no=sub_no_from_file)))
-    print(len(y_train))
-    print(type(infant_x_test), print(infant_x_test.shape))
+            infant_x=np.vstack((infant_x,get_feature_matrices(frames_num=frame_num, frames_to_skip=frames_to_skip, sub_no=sub_no_from_file)))
+    print(len(y))
+    print(type(infant_x),print(infant_x.shape))
 
     #X_train, X_test, y_train, y_test = split_data(infant_x, y, train_ratio=0.2)
     #linear_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')
-    #infant_x_train_2d = reduce_dim(infant_x_train)
     #infant_x_test_2d = reduce_dim(infant_x_test)
-    #X_train, X_test, y_train, y_test = split_data(infant_x_2d, y, train_ratio=0.5)
-    linear_clf, accuracy = run_svm_classifier(infant_x_train, infant_x_test, y_train, y_test, kernel='linear')
-    rbf_clf, accuracy = run_svm_classifier(infant_x_train, infant_x_test, y_train, y_test, kernel='rbf')
-    poly_clf, accuracy = run_svm_classifier(infant_x_train, infant_x_test, y_train, y_test, kernel='poly') #TODO change back to poly
-    sig_clf, accuracy = run_svm_classifier(infant_x_train, infant_x_test, y_train, y_test, kernel='sigmoid')
+    infant_x_2d = reduce_dim(infant_x)
+    X_train, X_test, y_train, y_test = split_data(infant_x_2d, y, train_ratio=0.5)
+    linear_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')
+    rbf_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')
+    poly_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='poly') #TODO change back to poly
+    sig_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='sigmoid')
     #y_nums = convert_labels_to_ints(y, label_type=label_group)
     #plot_results(infant_x_2d, y_nums, classifiers=(linear_clf, rbf_clf, poly_clf, sig_clf),titles=['Linear kernel', 'RBF kernel', 'Polynomial kernel', 'Sigmoid kernel'])
-    #plot_results_2(infant_x_2d, y_nums, models=[linear_clf, rbf_clf, poly_clf, sig_clf],titles=['Linear kernel', 'RBF kernel','poly kernel', 'Sigmoid kernel'])
+    plot_results_2(infant_x_2d, y_nums, models=[linear_clf, rbf_clf, poly_clf, sig_clf],titles=['Linear kernel', 'RBF kernel','poly kernel', 'Sigmoid kernel'])
 
 
 

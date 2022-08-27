@@ -4,6 +4,8 @@ from sklearn.model_selection import train_test_split
 from sklearn import svm, datasets
 import matplotlib.pyplot as plt
 import numpy as np
+
+import svm_tools
 from workshop_utils import *
 from svm_tools import *
 
@@ -185,14 +187,19 @@ def get_feature_matrices(sub_no, frames_to_skip, frames_num):
 
 
 if __name__ == '__main__':
+    #6113m
+    #3446m
     label_group="gaze_labels"
     frames_to_skip=30
-    frame_num=300 #TODO use the number of frames in the directory
+    frame_num=3000 #TODO use the number of frames in the directory
     number_of_frames=frame_num-frames_to_skip
-    subjects = os.listdir("subjects")[0:9]
+    #subjects = os.listdir("subjects")[0:2]
+    subjects=["611_3m","409_6m"]
+    random.shuffle(subjects)
     y=[]
     infant_x=0
     for sub_no_from_file in subjects:
+        print(sub_no_from_file)
         #sub_no_from_file = '611_3m'
         converted_sub_no_labels = subjects_dict[sub_no_from_file] #TODO use dict to convert from the file name to sub_no
         labels = get_labels_from_file(file_path='ep 1.xlsx')
@@ -202,18 +209,22 @@ if __name__ == '__main__':
         else:
             infant_x=np.vstack((infant_x,get_feature_matrices(frames_num=frame_num, frames_to_skip=frames_to_skip, sub_no=sub_no_from_file)))
     print(len(y))
+    y=svm_tools.convert_labels_to_ints(y,label_type=label_group)
+    print(y)
+    print(np.histogram(y))
     print(type(infant_x),print(infant_x.shape))
     #X_train, X_test, y_train, y_test = split_data(infant_x, y, train_ratio=0.2)
     #linear_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')
     infant_x_2d = reduce_dim(infant_x)
-    X_train, X_test, y_train, y_test = split_data_not_random(infant_x_2d, y, 6,3,number_of_frames)
+    X_train, X_test, y_train, y_test = split_data_not_random(infant_x_2d, y, 1,1,number_of_frames)
+
     linear_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')
     rbf_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')
     poly_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='poly') #TODO change back to poly
     sig_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='sigmoid')
-    y_nums = convert_labels_to_ints(y, label_type=label_group)
+    #y_nums = convert_labels_to_ints(y, label_type=label_group)
     #plot_results(infant_x_2d, y_nums, classifiers=(linear_clf, rbf_clf, poly_clf, sig_clf),titles=['Linear kernel', 'RBF kernel', 'Polynomial kernel', 'Sigmoid kernel'])
-    plot_results_2(infant_x_2d, y_nums, models=[linear_clf, rbf_clf, poly_clf, sig_clf],titles=['Linear kernel', 'RBF kernel','poly kernel', 'Sigmoid kernel'])
+    plot_results_2(infant_x_2d, y, models=[linear_clf, rbf_clf, poly_clf, sig_clf],titles=['Linear kernel', 'RBF kernel','poly kernel', 'Sigmoid kernel'])
 
 
 

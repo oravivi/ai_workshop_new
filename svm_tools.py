@@ -221,7 +221,6 @@ def convert_labels_to_ints(y, label_type='facial_exp_labels'):
         labels_to_num_facial_exp = {'GS': 0, 'FG': 1, 'OG': 2}
     else:
         print ("does not support label type")
-    [labels_to_num_facial_exp[label] for label in y]
     return [labels_to_num_facial_exp[label] for label in y]
 
 
