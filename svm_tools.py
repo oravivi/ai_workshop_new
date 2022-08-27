@@ -166,8 +166,8 @@ def convert_labels_to_ints(y, label_type='facial_exp_labels'):
 
 
 def reduce_dim(X):
-    X_embedded = TSNE(n_components=2, learning_rate='auto', init = 'random', perplexity = 3).fit_transform(X)
-    return X_dimensions
+    X_2d = TSNE(n_components=2, learning_rate='auto', init = 'random', perplexity = 30).fit_transform(X)
+    return X_2d
 
 def plot_results_2(X,y, models, titles):
     '''
@@ -194,7 +194,6 @@ def plot_results_2(X,y, models, titles):
         ax.set_xticks(())
         ax.set_yticks(())
         ax.set_title(title)
-
     plt.show()
 
 

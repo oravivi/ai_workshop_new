@@ -49,7 +49,7 @@ def eyebrows_dist(coordinates_dict: dict, frames_num):
     return convert_row_to_column(distances)
 
 
-# angle between the mouth edges line and the upper lip (bottom)
+# angle between the mouth edges line and the lower lip (bottom)
 def mouth_edges_to_lower_lip_angle(coordinates_dict, frames_num):
     angles = []
     for i in range(frames_num):
@@ -60,7 +60,7 @@ def mouth_edges_to_lower_lip_angle(coordinates_dict, frames_num):
         angles.append(dist)
     return convert_row_to_column(angles)
 
-
+# mouth left angle
 def mouth_left_angle(coordinates_dict, frames_num):
     angles = []
     for i in range(frames_num):
@@ -71,7 +71,7 @@ def mouth_left_angle(coordinates_dict, frames_num):
         angles.append(dist)
     return convert_row_to_column(angles)
 
-
+# mouth right angle
 def mouth_right_angle(coordinates_dict, frames_num):
     angles = []
     for i in range(frames_num):
@@ -85,7 +85,7 @@ def mouth_right_angle(coordinates_dict, frames_num):
 
 def extract_features_from_coordinates(infant_dict, frames_num):
     infant_features_matrix = []
-    adult_features_matrix = []
+    #adult_features_matrix = []
     #infant
     infant_features_matrix.append(left_eyebrow_center_to_eye_dist(infant_dict, frames_num))
     infant_features_matrix.append(right_eyebrow_center_to_eye_dist(infant_dict, frames_num))
@@ -99,6 +99,15 @@ def extract_features_from_coordinates(infant_dict, frames_num):
     #adult_features_matrix.append(mouth_edges_to_lower_lip_angle(adult_dict, frames_num))
     return infant_features_matrix
 
+def use_coordinates_directly(coordinates_dict, frames_num):
+    infant_features_matrix = []
+    infant_features_matrix.append(convert_row_to_column([coordinates_dict['mouth_upper_lip_top_2'][i][0] for i in range(frames_num)]))
+    infant_features_matrix.append(convert_row_to_column([coordinates_dict['mouth_upper_lip_top_2'][i][1] for i in range(frames_num)]))
+    infant_features_matrix.append(convert_row_to_column([coordinates_dict['mouth_right_edge'][i][0] for i in range(frames_num)]))
+    infant_features_matrix.append(convert_row_to_column([coordinates_dict['mouth_right_edge'][i][1] for i in range(frames_num)]))
+    infant_features_matrix.append(convert_row_to_column([coordinates_dict['mouth_left_edge'][i][0] for i in range(frames_num)]))
+    infant_features_matrix.append(convert_row_to_column([coordinates_dict['mouth_left_edge'][i][1] for i in range(frames_num)]))
+    return infant_features_matrix
 def get_feature_matrices(sub_no, frames_to_skip, frames_num):
     # get relevant dict for all frames
     names = ['left_eyebrow_center',
@@ -145,7 +154,7 @@ def get_feature_matrices(sub_no, frames_to_skip, frames_num):
     adult_features_matrix = []
 
     #infant_features_matrix, adult_features_matrix = extract_features_from_coordinates(infant_dict, adult_dict, total_frames)
-    infant_features_matrix = extract_features_from_coordinates(infant_dict, total_frames)
+    infant_features_matrix = use_coordinates_directly(infant_dict, total_frames)
     infant_features_matrix = np.concatenate(infant_features_matrix, axis=1)
     #adult_features_matrix = np.concatenate(adult_features_matrix, axis=1)
     return infant_features_matrix
@@ -157,18 +166,20 @@ if __name__ == '__main__':
     frame_num=3000 #TODO use the number of frames in the directory
     sub_no_from_file = '611_3m'
     converted_sub_no_labels = 1 #TODO use dict to convert from the file name to sub_no
-    infant_x = get_feature_matrices(frames_num=frame_num, frames_to_skip=frames_to_skip, sub_no=sub_no_from_file)
     labels = get_labels_from_file(file_path='ep 1.xlsx')
     y = [labels[converted_sub_no_labels]['facial_exp_labels'][i] for i in range(frames_to_skip, frame_num)]
+    infant_x = get_feature_matrices(frames_num=frame_num, frames_to_skip=frames_to_skip, sub_no=sub_no_from_file)
     X_train, X_test, y_train, y_test = split_data(infant_x, y, train_ratio=0.2)
-    linear_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')
-    #rbf_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')
-    #poly_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear') #TODO change back to poly
-    #sig_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='sigmoid')
-    y_nums = convert_labels_to_ints(y, label_type='facial_exp_labels')
+    #linear_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')
     infant_x_2d = reduce_dim(infant_x)
-    #plot_results(infant_x, y_nums, classifiers=(linear_clf, rbf_clf, poly_clf, sig_clf),titles=['Linear kernel', 'RBF kernel', 'Polynomial kernel', 'Sigmoid kernel'])
-    plot_results_2(infant_x, y_nums, models=[linear_clf, linear_clf, linear_clf,linear_clf],titles=['Linear kernel', 'Linear kernel','Linear kernel', 'Linear kernel'])
+    X_train, X_test, y_train, y_test = split_data(infant_x_2d, y, train_ratio=0.2)
+    linear_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')
+    rbf_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')
+    poly_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear') #TODO change back to poly
+    sig_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='sigmoid')
+    y_nums = convert_labels_to_ints(y, label_type='facial_exp_labels')
+    #plot_results(infant_x_2d, y_nums, classifiers=(linear_clf, rbf_clf, poly_clf, sig_clf),titles=['Linear kernel', 'RBF kernel', 'Polynomial kernel', 'Sigmoid kernel'])
+    plot_results_2(infant_x_2d, y_nums, models=[linear_clf, rbf_clf, linear_clf, sig_clf],titles=['Linear kernel', 'RBF kernel','Linear kernel', 'Sigmoid kernel'])
 
 
 
