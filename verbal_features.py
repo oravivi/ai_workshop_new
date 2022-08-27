@@ -42,6 +42,16 @@ if __name__ == '__main__':
              'left_eyelid_1',
              'left_eyelid_2',
              'left_eyelid_3',
+             'left_eyebrow_1',
+             'left_eyebrow_2',
+             'left_eyebrow_3',
+             'left_eyebrow_4',
+             'left_eyebrow_5',
+             'right_eyebrow_1',
+             'right_eyebrow_2',
+             'right_eyebrow_3',
+             'right_eyebrow_4',
+             'right_eyebrow_5',
              ]
     mouth_features = {"right inner corner" : [63, 64, 65],
                       "right outer corner" : [53, 54, 55],
@@ -50,17 +60,17 @@ if __name__ == '__main__':
 
     # numbers = [60, 61, 62, 63, 64, 65, 66, 67, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 7, 8, 9, 31, 33, 35]
     numbers = [7, 8, 9, 31, 33, 35, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67,
-               44, 45, 46, 37, 36, 41]
+               44, 45, 46, 37, 36, 41, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26]
 
     start_from_frame = 30
-    until_frame = 3500
+    until_frame = 3400
     coordinates_dict = extract_coordinates_for_all_frames(person_id=0,
                                                           start_from_frame=start_from_frame,
                                                           until_frame=until_frame,
                                                           body_part="face_keypoints_2d",
                                                           names=names,
                                                           points=numbers,
-                                                          subject="611_3m")
+                                                          subject="3649_6m")
 
     mouth_right_inner_corner_angles = []
     mouth_right_outer_corner_angles = []
@@ -80,22 +90,76 @@ if __name__ == '__main__':
     outer_upper_lip_3_y = []
     outer_bottom_lip_3_x = []
     outer_bottom_lip_3_y = []
-    for i in range(3470):
-        # mouth_right_inner_corner_angles.append(get_angle_between_three_points(
-        #     (coordinates_dict['inner_upper_lip_3'][i][0], coordinates_dict['inner_upper_lip_3'][i][1]),
-        #     (coordinates_dict['inner_lip_right_corner'][i][0], coordinates_dict['inner_lip_right_corner'][i][1]),
-        #     (coordinates_dict['inner_bottom_lip_1'][i][0], coordinates_dict['inner_bottom_lip_1'][i][1])))
+    chin_bottom_left_x = []
+    chin_bottom_left_y = []
+    chin_bottom_right_x = []
+    chin_bottom_right_y = []
 
-        # mouth_right_inner_corner_x.append(coordinates_dict['inner_lip_right_corner'][i][0])
-        # mouth_right_inner_corner_y.append(coordinates_dict['inner_lip_right_corner'][i][1])
-        # mouth_left_inner_corner_x.append(coordinates_dict['inner_lip_left_corner'][i][0])
-        # mouth_left_inner_corner_y.append(coordinates_dict['inner_lip_left_corner'][i][1])
+    left_eyebrow_1_x = []
+    left_eyebrow_1_y = []
+    left_eyebrow_2_x = []
+    left_eyebrow_2_y = []
+    left_eyebrow_3_x = []
+    left_eyebrow_3_y = []
+    left_eyebrow_4_x = []
+    left_eyebrow_4_y = []
+    left_eyebrow_5_x = []
+    left_eyebrow_5_y = []
+
+    right_eyebrow_1_x = []
+    right_eyebrow_1_y = []
+    right_eyebrow_2_x = []
+    right_eyebrow_2_y = []
+    right_eyebrow_3_x = []
+    right_eyebrow_3_y = []
+    right_eyebrow_4_x = []
+    right_eyebrow_4_y = []
+    right_eyebrow_5_x = []
+    right_eyebrow_5_y = []
+    lip_distances = []
+    for i in range(3370):
+        mouth_right_inner_corner_angles.append(get_angle_between_three_points(
+            (coordinates_dict['inner_upper_lip_3'][i][0], coordinates_dict['inner_upper_lip_3'][i][1]),
+            (coordinates_dict['inner_lip_right_corner'][i][0], coordinates_dict['inner_lip_right_corner'][i][1]),
+            (coordinates_dict['inner_bottom_lip_1'][i][0], coordinates_dict['inner_bottom_lip_1'][i][1])))
+
+        mouth_right_inner_corner_x.append(coordinates_dict['inner_lip_right_corner'][i][0])
+        mouth_right_inner_corner_y.append(coordinates_dict['inner_lip_right_corner'][i][1])
+        mouth_left_inner_corner_x.append(coordinates_dict['inner_lip_left_corner'][i][0])
+        mouth_left_inner_corner_y.append(coordinates_dict['inner_lip_left_corner'][i][1])
         mustache_right_edge_x.append(coordinates_dict['mustache_right_edge'][i][0])
         mustache_right_edge_y.append(coordinates_dict['mustache_right_edge'][i][1])
         outer_upper_lip_3_x.append(coordinates_dict['outer_upper_lip_3'][i][0])
         outer_upper_lip_3_y.append(coordinates_dict['outer_upper_lip_3'][i][1])
         outer_bottom_lip_3_x.append(coordinates_dict['outer_bottom_lip_3'][i][0])
         outer_bottom_lip_3_y.append(coordinates_dict['outer_bottom_lip_3'][i][1])
+        chin_bottom_left_x.append(coordinates_dict['chin_bottom_left'][i][0])
+        chin_bottom_left_y.append(coordinates_dict['chin_bottom_left'][i][1])
+        chin_bottom_right_x.append(coordinates_dict['chin_bottom_right'][i][0])
+        chin_bottom_right_y.append(coordinates_dict['chin_bottom_right'][i][1])
+        left_eyebrow_1_x.append(coordinates_dict['left_eyebrow_1'][i][0])
+        left_eyebrow_1_y.append(coordinates_dict['left_eyebrow_1'][i][1])
+        left_eyebrow_2_x.append(coordinates_dict['left_eyebrow_1'][i][0])
+        left_eyebrow_2_y.append(coordinates_dict['left_eyebrow_1'][i][1])
+        left_eyebrow_3_x.append(coordinates_dict['left_eyebrow_1'][i][0])
+        left_eyebrow_3_y.append(coordinates_dict['left_eyebrow_1'][i][1])
+        left_eyebrow_4_x.append(coordinates_dict['left_eyebrow_1'][i][0])
+        left_eyebrow_4_y.append(coordinates_dict['left_eyebrow_1'][i][1])
+        left_eyebrow_5_x.append(coordinates_dict['left_eyebrow_1'][i][0])
+        left_eyebrow_5_y.append(coordinates_dict['left_eyebrow_1'][i][1])
+
+        right_eyebrow_1_x.append(coordinates_dict['right_eyebrow_1'][i][0])
+        right_eyebrow_1_y.append(coordinates_dict['right_eyebrow_1'][i][1])
+        right_eyebrow_2_x.append(coordinates_dict['right_eyebrow_1'][i][0])
+        right_eyebrow_2_y.append(coordinates_dict['right_eyebrow_1'][i][1])
+        right_eyebrow_3_x.append(coordinates_dict['right_eyebrow_1'][i][0])
+        right_eyebrow_3_y.append(coordinates_dict['right_eyebrow_1'][i][1])
+        right_eyebrow_4_x.append(coordinates_dict['right_eyebrow_1'][i][0])
+        right_eyebrow_4_y.append(coordinates_dict['right_eyebrow_1'][i][1])
+        right_eyebrow_5_x.append(coordinates_dict['right_eyebrow_1'][i][0])
+        right_eyebrow_5_y.append(coordinates_dict['right_eyebrow_1'][i][1])
+        lip_distances.append((distance_between_2_points((outer_upper_lip_3_x[i], outer_upper_lip_3_y[i]),
+                                                        (outer_bottom_lip_3_x[i], outer_bottom_lip_3_y[i]))))
 
 
         mouth_right_outer_corner_angles.append(get_angle_between_three_points(
@@ -129,20 +193,48 @@ if __name__ == '__main__':
         # left_eye_features.append(((mouth_left_inner_corner_angles[i] + mouth_left_outer_corner_angles[i]) / 2) * left_eye_angles[i])
 
 
-    # temp_X = [np.array(mouth_right_inner_corner_angles).reshape(-1, 1),
-    #           np.array(mouth_right_outer_corner_angles).reshape(-1, 1),
-    #           np.array(mouth_left_inner_corner_angles).reshape(-1, 1),
-    #           np.array(mouth_left_outer_corner_angles).reshape(-1, 1),
-    #           np.array(right_eye_angles).reshape(-1, 1),
-    #           np.array(left_eye_angles).reshape(-1, 1)
-    #           ]
-    temp_X = [np.array(mustache_right_edge_x).reshape(-1, 1),
-              np.array(mustache_right_edge_y).reshape(-1, 1),
-              np.array(outer_upper_lip_3_x).reshape(-1, 1),
-              np.array(outer_upper_lip_3_y).reshape(-1, 1),
-              np.array(outer_bottom_lip_3_x).reshape(-1, 1),
-              np.array(outer_bottom_lip_3_y).reshape(-1, 1),
+    temp_X = [np.array(mouth_right_inner_corner_angles).reshape(-1, 1),
+              np.array(mouth_right_outer_corner_angles).reshape(-1, 1),
+              np.array(mouth_left_inner_corner_angles).reshape(-1, 1),
+              np.array(mouth_left_outer_corner_angles).reshape(-1, 1),
+              np.array(right_eye_angles).reshape(-1, 1),
+              np.array(left_eye_angles).reshape(-1, 1),
               ]
+    # temp_X = [np.array(outer_upper_lip_3_x).reshape(-1, 1),
+    #           np.array(outer_upper_lip_3_y).reshape(-1, 1),
+    #           np.array(outer_bottom_lip_3_x).reshape(-1, 1),
+    #           np.array(outer_bottom_lip_3_y).reshape(-1, 1),
+    #           np.array(mustache_right_edge_x).reshape(-1, 1),
+    #           np.array(mustache_right_edge_y).reshape(-1, 1),
+    #           np.array(mouth_left_inner_corner_x).reshape(-1, 1),
+    #           np.array(mouth_left_inner_corner_y).reshape(-1, 1),
+    #           np.array(mouth_right_inner_corner_x).reshape(-1, 1),
+    #           np.array(mouth_right_inner_corner_y).reshape(-1, 1),
+    #           np.array(chin_bottom_left_x).reshape(-1, 1),
+    #           np.array(chin_bottom_left_y).reshape(-1, 1),
+    #           np.array(chin_bottom_right_x).reshape(-1, 1),
+    #           np.array(chin_bottom_right_y).reshape(-1, 1),
+    #           np.array(left_eyebrow_1_x).reshape(-1, 1),
+    #           np.array(left_eyebrow_1_y).reshape(-1, 1),
+    #           np.array(left_eyebrow_2_x).reshape(-1, 1),
+    #           np.array(left_eyebrow_2_y).reshape(-1, 1),
+    #           np.array(left_eyebrow_3_x).reshape(-1, 1),
+    #           np.array(left_eyebrow_3_y).reshape(-1, 1),
+    #           np.array(left_eyebrow_4_x).reshape(-1, 1),
+    #           np.array(left_eyebrow_4_y).reshape(-1, 1),
+    #           np.array(left_eyebrow_5_x).reshape(-1, 1),
+    #           np.array(left_eyebrow_5_y).reshape(-1, 1),
+    #           np.array(right_eyebrow_1_x).reshape(-1, 1),
+    #           np.array(right_eyebrow_1_y).reshape(-1, 1),
+    #           np.array(right_eyebrow_2_x).reshape(-1, 1),
+    #           np.array(right_eyebrow_2_y).reshape(-1, 1),
+    #           np.array(right_eyebrow_3_x).reshape(-1, 1),
+    #           np.array(right_eyebrow_3_y).reshape(-1, 1),
+    #           np.array(right_eyebrow_4_x).reshape(-1, 1),
+    #           np.array(right_eyebrow_4_y).reshape(-1, 1),
+    #           np.array(right_eyebrow_5_x).reshape(-1, 1),
+    #           np.array(right_eyebrow_5_y).reshape(-1, 1)
+    #           ]
 
     X = np.concatenate(temp_X, axis=1)
     # X = np.transpose(X)
@@ -152,16 +244,16 @@ if __name__ == '__main__':
     infant_features_matrix = np.concatenate(infant_features_matrix, axis=1)
 
     labels = get_labels_from_file(file_path='ep 1.xlsx')
-    y = [labels[1]['verbal_labels'][i] for i in range(start_from_frame, 3500)]
+    y = [labels[20]['verbal_labels'][i] for i in range(start_from_frame, 3400)]
     infant_x_2d = reduce_dim(infant_features_matrix)
     X_train, X_test, y_train, y_test = split_data(infant_x_2d, y, train_ratio=0.2)
     print(X_train)
     classifiers = []
+    classifiers.append(run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')[0])
     classifiers.append(run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')[0])
-    classifiers.append(run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')[0])
-    classifiers.append(run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')[0])
-    classifiers.append(run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')[0])
-    titles = ['linear', 'rbf', 'linear', 'sigmoid']
+    classifiers.append(run_svm_classifier(X_train, X_test, y_train, y_test, kernel='poly')[0])
+    classifiers.append(run_svm_classifier(X_train, X_test, y_train, y_test, kernel='sigmoid')[0])
+    titles = ['linear', 'rbf', 'poly', 'sigmoid']
     labels_for_plot = convert_labels_to_ints(y=y, label_type='verbal_labels')
 
     plot_results_2(infant_x_2d, labels_for_plot, classifiers, titles)
