@@ -173,7 +173,7 @@ def get_feature_matrices(sub_no, frames_to_skip, frames_num):
     numbers = [45, 42, 43, 47, 69, 39, 36, 38, 40, 68, 30, 27, 8]
     frames_num = frames_num
     total_frames = frames_num-frames_to_skip
-    infant_dict = extract_coordinates_for_all_frames(person_id=0, start_from_frame=frames_to_skip, until_frame=frames_num, body_part='face_keypoints_2d' ,names=names, points=numbers, subject=sub_no)
+    infant_dict = extract_coordinates_for_all_frames(person_id=1, start_from_frame=frames_to_skip, until_frame=frames_num, body_part='face_keypoints_2d' ,names=names, points=numbers, subject=sub_no)
     #adult_dict = extract_coordinates_for_all_frames(1, 2, 'face_keypoints_2d', names, numbers)
     infant_features_matrix = []
     adult_features_matrix = []
@@ -187,38 +187,42 @@ def get_feature_matrices(sub_no, frames_to_skip, frames_num):
 
 
 if __name__ == '__main__':
-    #6113m
+    #good videos:409_6m, 611 3m,3447_3m
+    #bad videos:  2831_6m
+    #
     #3446m
     label_group="gaze_labels"
     frames_to_skip=30
-    frame_num=3000 #TODO use the number of frames in the directory
+    frame_num=1500 #TODO use the number of frames in the directory
     number_of_frames=frame_num-frames_to_skip
-    #subjects = os.listdir("subjects")[0:2]
-    subjects=["611_3m","409_6m"]
+    subjects = os.listdir("subjects")[4:8]
     random.shuffle(subjects)
     y=[]
     infant_x=0
-    for sub_no_from_file in subjects:
+    for i,sub_no_from_file in enumerate(subjects):
         print(sub_no_from_file)
         #sub_no_from_file = '611_3m'
         converted_sub_no_labels = subjects_dict[sub_no_from_file] #TODO use dict to convert from the file name to sub_no
         labels = get_labels_from_file(file_path='ep 1.xlsx')
-        y.extend([labels[converted_sub_no_labels][label_group][i] for i in range(frames_to_skip, frame_num)])
+        temp=[labels[converted_sub_no_labels][label_group][i] for i in range(frames_to_skip, frame_num)]
+        if (i==len(subjects)-1):
+            print(np.histogram(svm_tools.convert_labels_to_ints(temp,label_type=label_group)))
+        y.extend(temp)
         if (isinstance(infant_x, int)):
             infant_x = get_feature_matrices(frames_num=frame_num, frames_to_skip=frames_to_skip, sub_no=sub_no_from_file)
         else:
             infant_x=np.vstack((infant_x,get_feature_matrices(frames_num=frame_num, frames_to_skip=frames_to_skip, sub_no=sub_no_from_file)))
-    print(len(y))
     y=svm_tools.convert_labels_to_ints(y,label_type=label_group)
-    print(y)
-    print(np.histogram(y))
     print(type(infant_x),print(infant_x.shape))
     #X_train, X_test, y_train, y_test = split_data(infant_x, y, train_ratio=0.2)
     #linear_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')
+    print("checkpoint 1")
     infant_x_2d = reduce_dim(infant_x)
-    X_train, X_test, y_train, y_test = split_data_not_random(infant_x_2d, y, 1,1,number_of_frames)
-
+    print("checkpoint 2")
+    X_train, X_test, y_train, y_test = split_data_not_random(infant_x_2d, y, 3,1,number_of_frames)
+    print("checkpoint 3")
     linear_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')
+    print("checkpoint 4")
     rbf_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='rbf')
     poly_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='poly') #TODO change back to poly
     sig_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='sigmoid')

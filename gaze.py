@@ -4,6 +4,8 @@ from sklearn.model_selection import train_test_split
 from sklearn import svm, datasets
 import matplotlib.pyplot as plt
 import numpy as np
+
+import svm_tools
 from workshop_utils import *
 from svm_tools import *
 
@@ -171,7 +173,7 @@ def get_feature_matrices(sub_no, frames_to_skip, frames_num):
     numbers = [45, 42, 43, 47, 69, 39, 36, 38, 40, 68, 30, 27, 8]
     frames_num = frames_num
     total_frames = frames_num-frames_to_skip
-    infant_dict = extract_coordinates_for_all_frames(person_id=0, start_from_frame=frames_to_skip, until_frame=frames_num, body_part='face_keypoints_2d' ,names=names, points=numbers, subject=sub_no)
+    infant_dict = extract_coordinates_for_all_frames(person_id=1, start_from_frame=frames_to_skip, until_frame=frames_num, body_part='face_keypoints_2d' ,names=names, points=numbers, subject=sub_no)
     #adult_dict = extract_coordinates_for_all_frames(1, 2, 'face_keypoints_2d', names, numbers)
     infant_features_matrix = []
     adult_features_matrix = []
@@ -188,7 +190,7 @@ if __name__ == '__main__':
     label_group="gaze_labels"
     frames_to_skip=30
     frame_num=300 #TODO use the number of frames in the directory
-    subjects = os.listdir("subjects")[0:2]
+    subjects = os.listdir("subjects")[0:8]
     y=[]
     infant_x=0
     for sub_no_from_file in subjects:
@@ -203,6 +205,7 @@ if __name__ == '__main__':
             infant_x=np.vstack((infant_x,get_feature_matrices(frames_num=frame_num, frames_to_skip=frames_to_skip, sub_no=sub_no_from_file)))
     print(len(y))
     print(type(infant_x),print(infant_x.shape))
+    y = svm_tools.convert_labels_to_ints(y, label_type=label_group)
 
     #X_train, X_test, y_train, y_test = split_data(infant_x, y, train_ratio=0.2)
     #linear_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='linear')
@@ -215,7 +218,7 @@ if __name__ == '__main__':
     sig_clf, accuracy = run_svm_classifier(X_train, X_test, y_train, y_test, kernel='sigmoid')
     #y_nums = convert_labels_to_ints(y, label_type=label_group)
     #plot_results(infant_x_2d, y_nums, classifiers=(linear_clf, rbf_clf, poly_clf, sig_clf),titles=['Linear kernel', 'RBF kernel', 'Polynomial kernel', 'Sigmoid kernel'])
-    plot_results_2(infant_x_2d, y_nums, models=[linear_clf, rbf_clf, poly_clf, sig_clf],titles=['Linear kernel', 'RBF kernel','poly kernel', 'Sigmoid kernel'])
+    plot_results_2(infant_x_2d, y, models=[linear_clf, rbf_clf, poly_clf, sig_clf],titles=['Linear kernel', 'RBF kernel','poly kernel', 'Sigmoid kernel'])
 
 
 
